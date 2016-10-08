@@ -1,0 +1,26 @@
+<ion-view view-title="Registro">
+<ion-modal-view>
+  <ion-header-bar>
+    <h1 class="title">Login</h1>
+    <div class="buttons">
+      <button class="button button-clear" ng-click="closeLogin()">Close</button>
+    </div>
+  </ion-header-bar>
+  <ion-content >
+      <div class="list">
+        <label class="item item-input">
+          <span class="input-label">Usuario</span>
+          <input  cache-view="false"type="text" ng-model="loginData.usuario">
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Contraseña</span>
+          <input  cache-view="false"type="password" ng-model="loginData.pass">
+        </label>
+        
+        <label class="item">
+          <button class="button button-block button-positive" ng-click="doLogin()">Ingresá</button>
+        </label>
+      </div>
+
+  </ion-content>
+</ion-modal-view>
