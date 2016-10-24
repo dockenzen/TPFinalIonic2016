@@ -1,0 +1,39 @@
+<ion-view title="Bienvenido" id="page2">
+  <ion-nav-buttons side="left" class="has-header">
+    <button class="button button-icon button-assertive icon ion-android-happy"></button>
+  </ion-nav-buttons>
+  <ion-content padding="true" class="has-header">
+    <div id="bienvenido-button-bar2" class="button-bar"></div>
+    <div class="item item-body" id="bienvenido-list-item-container3">
+      <h2 id="bienvenido-heading1" style="color:#000000;font-weight:600;font-style:italic;text-align:center;">Conectarse</h2>
+      <div id="bienvenido-markdown4" style="text-align:center;"></div>
+      <form id="bienvenido-form2" class="list">
+        <label class="item item-input" id="bienvenido-input4" name="loginData.usermail">
+          <input type="text" ng-model="loginData.usermail" placeholder="correo">
+        </label>
+        <label class="item item-input" id="bienvenido-input5" name="loginData.userpass">
+          <input type="password" ng-model="loginData.userpass" placeholder="contraseña">
+        </label>
+        <div class="spacer" style="width: 268px; height: 13px;"></div>
+        <button id="bienvenido-button2" ng-click="doLogin()" style="border-radius:30px 30px 30px 30px;" class="button button-calm  button-block icon-right ion-android-arrow-forward">Entrar</button>
+      </form>
+        <p align="center">
+          <a ng-disabled="!loginData.usermail" ng-click="resetPassword()">
+            ¿Olvido su contraseña ?
+          </a>
+        </p>
+        <div class="spacer" style="width: 268px; height: 10px;"></div>
+        <u><p><h2 align="center">Utilice su red social favorita</h2></p></u>
+        <div id="bienvenido-button-bar3" class="button-bar">
+          <button id="bienvenido-button6" style="border-radius:1000px 1000px 1000px 1000px;" class="button button-assertive  button-block icon ion-social-google" ng-click="doLoginGoogle()"></button>
+          <button id="bienvenido-button7" class="button button-positive  button-block button-clear"></button>
+          <button id="bienvenido-button8" style="border-radius:1000px 1000px 1000px 1000px;" class="button button-dark  button-block icon ion-social-github" ng-click="doLoginGithub()"></button>
+          <button id="bienvenido-button9" class="button button-positive  button-block button-clear"></button>
+          <button id="bienvenido-button10" style="border-radius:1000px 1000px 1000px 1000px;" class="button button-positive  button-block icon ion-social-facebook" ng-click="doLoginFacebook()"></button>
+        </div>
+         <u><p><h2 align="center">ó cree una cuenta</h2></p></u>
+        <button id="bienvenido-button12" style="color:#000000;" class="button button-balanced  button-block">Registrarse</button>
+      
+    </div>
+  </ion-content>
+</ion-view>
