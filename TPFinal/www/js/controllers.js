@@ -1,158 +1,217 @@
+/* global angular, document, window */
+'use strict';
+
 angular.module('starter.controllers', [])
 
+.controller('AppCtrl', function($scope, $ionicModal, $ionicPopover, $timeout) {
+    // Form data for the login modal
+    $scope.loginData = {};
+    $scope.isExpanded = false;
+    $scope.hasHeaderFabLeft = false;
+    $scope.hasHeaderFabRight = false;
 
-.controller('bienvenidoCtrl', ['$scope', '$stateParams','$ionicModal','$ionicPopup','$timeout','$state','Usuario', // The following is the constructor function for this page's controller. See https://docs.angularjs.org/guide/controller
-// You can include any angular dependencies as parameters for this function
-// TIP: Access Route Parameters for your page via $stateParams.parameterName
-function ($scope, $stateParams,$ionicModal,$ionicPopup,$state,Usuario,$timeout) {
-
-
-  //var queHay = firebase.auth().currentUser != null;
-
-  $scope.registerData = {};
-  $scope.loginData = {};
-
-  // Create the login modal that we will use later
-  $ionicModal.fromTemplateUrl('templates/tab-dash.html', {
-    scope: $scope
-  }).then(function(modal) {
-    $scope.modal = modal;
-  });
-
-  // Triggered in the login modal to close it
-  $scope.closeLogin = function() {
-    $scope.modal.hide();
-  };
-
-  // Open the login modal
-  $scope.login = function() {
-    $scope.modal.show();
-  };
-
-  // Perform the login action when the user submits the login form
-  $scope.doLogin = function() {
-    //console.log('Doing login', $scope.loginData);
-    if(($scope.loginData.usermail == null || $scope.loginData.usermail == "") && ($scope.loginData.userpass == null || $scope.loginData.userpass == "") )
-    {
-          $scope.showAlert("Ingrese su usuario/contraseña");
+    var navIcons = document.getElementsByClassName('ion-navicon');
+    for (var i = 0; i < navIcons.length; i++) {
+        navIcons.addEventListener('click', function() {
+            this.classList.toggle('active');
+        });
     }
+
+    ////////////////////////////////////////
+    // Layout Methods
+    ////////////////////////////////////////
+
+    $scope.hideNavBar = function() {
+        document.getElementsByTagName('ion-nav-bar')[0].style.display = 'none';
+    };
+
+    $scope.showNavBar = function() {
+        document.getElementsByTagName('ion-nav-bar')[0].style.display = 'block';
+    };
+
+    $scope.noHeader = function() {
+        var content = document.getElementsByTagName('ion-content');
+        for (var i = 0; i < content.length; i++) {
+            if (content[i].classList.contains('has-header')) {
+                content[i].classList.toggle('has-header');
+            }
+        }
+    };
+
+    $scope.setExpanded = function(bool) {
+        $scope.isExpanded = bool;
+    };
+
+    $scope.setHeaderFab = function(location) {
+        var hasHeaderFabLeft = false;
+        var hasHeaderFabRight = false;
+
+        switch (location) {
+            case 'left':
+                hasHeaderFabLeft = true;
+                break;
+            case 'right':
+                hasHeaderFabRight = true;
+                break;
+        }
+
+        $scope.hasHeaderFabLeft = hasHeaderFabLeft;
+        $scope.hasHeaderFabRight = hasHeaderFabRight;
+    };
+
+    $scope.hasHeader = function() {
+        var content = document.getElementsByTagName('ion-content');
+        for (var i = 0; i < content.length; i++) {
+            if (!content[i].classList.contains('has-header')) {
+                content[i].classList.toggle('has-header');
+            }
+        }
+
+    };
+
+    $scope.hideHeader = function() {
+        $scope.hideNavBar();
+        $scope.noHeader();
+    };
+
+    $scope.showHeader = function() {
+        $scope.showNavBar();
+        $scope.hasHeader();
+    };
+
+    $scope.clearFabs = function() {
+        var fabs = document.getElementsByClassName('button-fab');
+        if (fabs.length && fabs.length > 1) {
+            fabs[0].remove();
+        }
+    };
+
+    
+
+
+})
+
+.controller('LoginCtrl', function($scope, $timeout, $stateParams, ionicMaterialInk) {
+    
+        $scope.$parent.clearFabs();
+            $timeout(function() {
+                $scope.$parent.hideHeader();
+            }, 0);
+            ionicMaterialInk.displayEffect();
+
+
+    
+try{
+
+    $scope.login = {};
+    $scope.login.usuario = "lenibaldassarre@gmail.com";
+    $scope.login.clave = "123456";
+
+    if (firebase.auth().currentUser != null)
+    {
+      if (firebase.auth().currentUser.emailVerified == false)
+      {
+        console.info("verificado");
+        $scope.verificado = 'no';
+        $scope.logueado = 'si';
+        //$scope.cartelVerificar = false;
+      }
       else
       {
-        //console.log(Usuario.logueado.val());
+        $scope.logueado = 'no';
+        $scope.verificado = 'no';
+        //$scope.cartelVerificar = false;
+      }
+    }
+    else{
+      $scope.logueado = 'no';
+      $scope.verificado = 'no';
+      //$scope.cartelVerificar = false;
+    }
+  }
+  catch (error)
+  {
+    //$scope.mensajeLogin.mensaje = "Ha ocurrido un error.";
+    //$scope.mensajeLogin.ver = true;
+    //$scope.cargando = false;
+    //$scope.mensajeLogin.estilo = "alert-danger";
+    console.info("Ha ocurrido un error en LoginCtrl. " + error);
+  }
 
-        var user = $scope.loginData.usermail;
-        var pass = $scope.loginData.userpass;
-        $scope.usuario = user.trim();
 
-     firebase.auth().signInWithEmailAndPassword(user, pass)
-      .catch(function(error) {
-      // Handle Errors here.
-      var errorCode = error.code;
-      var errorMessage = error.message;
-      console.info("ERROR " + errorCode, errorMessage);
-      // ...
-    }).then(function(success){
-      console.info("SUCCESS",success);
-        if(success){
-          if(firebase.auth().currentUser.emailVerified){
-            $scope.afterLoginSuccess();
-          }else{
-            firebase.auth().currentUser.sendEmailVerification().then(function(){
-               var alertPopup = $ionicPopup.alert({
-                 title: 'Verificacion de Email',
-                 template: 'Se ha enviado un mail para verificar la direccion del usuario'
-               });
+$scope.Loguear = function (){
+  /*  $scope.mensajeLogin.ver = false;
+    $scope.cartelVerificar = false;
+    $scope.cargando = true;*/
+    try
+    {
+      firebase.auth().signInWithEmailAndPassword($scope.login.usuario, $scope.login.clave)
+      .then( function(resultado){
+        var usuario = firebase.auth().currentUser;
+        var updates = {};
+        updates['/usuario/' + usuario.displayName + '/fechaAcceso'] = firebase.database.ServerValue.TIMESTAMP;
+     //   Servicio.Editar(updates);
 
-               alertPopup.then(function(res) {
-                 console.log('Alert de Verificacion cerrado');
-               });
-            },function(error){
-              console.info("Verification error",error);
-            });
-            
+        /*Servicio.Cargar('/usuario/' + usuario.displayName).on('value',
+          function(respuesta) {
+       //     FactoryUsuario.Logueado = respuesta.val();
+          },
+          function(error) {
+            // body...
           }
-        }else{
-          $scope.isLogged = false;
-        }
-    });
-        //var usuario = { "name": $scope.usuario};
-        //Chats.user = usuario;
-        //$state.go("tab.trivia", usuario);
-      }
-    };
 
-     $scope.afterLoginSuccess = function(){
-      $scope.checkIfUserExists();
-      }
+        );*/
 
-      $scope.checkIfUserExists = function(){
-      var user = firebase.auth().currentUser;
-        firebase.database().ref('users/' + user.uid).once('value', function(snapshot) {
-          var exists = (snapshot.val() != null);
-          console.log(exists);
-          $scope.userExistsCallback(exists);
-        });
-      }
+        $timeout(function() {
+          $scope.logueado = 'si';
+          if (usuario.emailVerified == false)
+            $scope.verificado = 'no';
+          else
+            {
+              try
+              {
+                FCMPlugin.subscribeToTopic('borbotones');
+              }
+              catch(error)
+              {
+                console.info("No es un dispositivo móvil");
+              }
+              $scope.verificado = 'si';
+              //$state.go("app.juegos");
+            }
+          $scope.cargando = false;
+        }, 1000);
+      }, function (error){
+          $timeout(function() {
+            switch (error.code)
+            {
+              case "auth/user-not-found":
+              case "auth/wrong-password":
+              case "auth/invalid-email":
+                  $scope.mensajeLogin.mensaje = "Correo o contraseña incorrectos.";
+                  $scope.mensajeLogin.ver = true;
+                  $scope.mensajeLogin.estilo = "alert-danger";
+                break;
 
-      $scope.userExistsCallback = function(exists) {
-      if (!exists) {
-          console.log("Create Firebase Profile");
-          $scope.createUserData();
-        }else{
-          console.log("Get User Data");
-          $scope.getCurrentUserData();
-        }
-      }
-
-        $scope.createUserData = function(){
-          var user = firebase.auth().currentUser;
-          var resData = {
-            uid: user.uid,
-            username: user.displayName,
-            email: user.email,
-            credits: 1000,
-            profile_picture : user.photoURL
-          };
-
-          firebase.database().ref('users/' + user.uid).set(resData);
-
-          $scope.userData = resData;
-          Usuario.login($scope.userData);
-
-          $timeout(function(){
-            $scope.isLogged = true;
-            $scope.modalState = 'Perfil';
-            console.log($scope.userData);
-          },100);
-        }
-
-         $scope.getCurrentUserData = function(){
-          var user = firebase.auth().currentUser;
-          firebase.database().ref('users/' + user.uid).once('value', function(snapshot) {
-            var exists = (snapshot.val() != null);
-             console.info("User Snapshot: " , snapshot.val());
-            $scope.userData = snapshot.val();
-            Usuario.login($scope.userData);
-
-            $timeout(function(){
-              $scope.isLogged = true;
-              $scope.modalState = 'Perfil';
-              console.log($scope.userData);
-            },100);
-          });
-         };
-  
-    $scope.showAlert = function(resultado) {
-      var alertPopup = $ionicPopup.alert({
-         title: resultado
+            }
+            $scope.cargando = false;
+          }, 1000);
       });
-      alertPopup.then(function(res) {
-         // Custom functionality....
-      });
-    };
+    }
+    catch (error)
+    {
+      $scope.mensajeLogin.mensaje = "Ha ocurrido un error.";
+      $scope.mensajeLogin.ver = true;
+      $scope.mensajeLogin.estilo = "alert-danger";
+      console.info("Ha ocurrido un error en Logear(). " + error);
+    }
+  };
 
 
-    $scope.doLoginGoogle = function(){
+
+
+
+$scope.doLoginGoogle = function(){
       var provider = new firebase.auth.GoogleAuthProvider();
       firebase.auth().signInWithPopup(provider)
         .then(function(response){
@@ -221,35 +280,88 @@ function ($scope, $stateParams,$ionicModal,$ionicPopup,$state,Usuario,$timeout) 
 
 
 
-}
-
-])
 
 
-
-
-
-.controller('ChatsCtrl', function($scope, Chats) {
-  // With the new view caching in Ionic, Controllers are only called
-  // when they are recreated or on app start, instead of every page change.
-  // To listen for when this page is active (for example, to refresh data),
-  // listen for the $ionicView.enter event:
-  //
-  //$scope.$on('$ionicView.enter', function(e) {
-  //});
-
-  $scope.chats = Chats.all();
-  $scope.remove = function(chat) {
-    Chats.remove(chat);
-  };
 })
 
-.controller('ChatDetailCtrl', function($scope, $stateParams, Chats) {
-  $scope.chat = Chats.get($stateParams.chatId);
+.controller('FriendsCtrl', function($scope, $stateParams, $timeout, ionicMaterialInk, ionicMaterialMotion) {
+    // Set Header
+    $scope.$parent.showHeader();
+    $scope.$parent.clearFabs();
+    $scope.$parent.setHeaderFab('left');
+
+    // Delay expansion
+    $timeout(function() {
+        $scope.isExpanded = true;
+        $scope.$parent.setExpanded(true);
+    }, 300);
+
+    // Set Motion
+    ionicMaterialMotion.fadeSlideInRight();
+
+    // Set Ink
+    ionicMaterialInk.displayEffect();
 })
 
-.controller('AccountCtrl', function($scope) {
-  $scope.settings = {
-    enableFriends: true
-  };
-});
+.controller('ProfileCtrl', function($scope, $stateParams, $timeout, ionicMaterialMotion, ionicMaterialInk) {
+    // Set Header
+    $scope.$parent.showHeader();
+    $scope.$parent.clearFabs();
+    $scope.isExpanded = false;
+    $scope.$parent.setExpanded(false);
+    $scope.$parent.setHeaderFab(false);
+
+    // Set Motion
+    $timeout(function() {
+        ionicMaterialMotion.slideUp({
+            selector: '.slide-up'
+        });
+    }, 300);
+
+    $timeout(function() {
+        ionicMaterialMotion.fadeSlideInRight({
+            startVelocity: 3000
+        });
+    }, 700);
+
+    // Set Ink
+    ionicMaterialInk.displayEffect();
+})
+
+.controller('ActivityCtrl', function($scope, $stateParams, $timeout, ionicMaterialMotion, ionicMaterialInk) {
+    $scope.$parent.showHeader();
+    $scope.$parent.clearFabs();
+    $scope.isExpanded = true;
+    $scope.$parent.setExpanded(true);
+    $scope.$parent.setHeaderFab('right');
+
+    $timeout(function() {
+        ionicMaterialMotion.fadeSlideIn({
+            selector: '.animate-fade-slide-in .item'
+        });
+    }, 200);
+
+    // Activate ink for controller
+    ionicMaterialInk.displayEffect();
+})
+
+.controller('GalleryCtrl', function($scope, $stateParams, $timeout, ionicMaterialInk, ionicMaterialMotion) {
+    $scope.$parent.showHeader();
+    $scope.$parent.clearFabs();
+    $scope.isExpanded = true;
+    $scope.$parent.setExpanded(true);
+    $scope.$parent.setHeaderFab(false);
+
+    // Activate ink for controller
+    ionicMaterialInk.displayEffect();
+
+    ionicMaterialMotion.pushDown({
+        selector: '.push-down'
+    });
+    ionicMaterialMotion.fadeSlideInRight({
+        selector: '.animate-fade-slide-in .item'
+    });
+
+})
+
+;
