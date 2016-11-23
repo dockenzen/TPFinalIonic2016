@@ -104,9 +104,9 @@ angular.module('starter.controllers', [])
 try{
 
     $scope.login = {};
-    $scope.login.usuario = "lenibaldassarre@gmail.com";
+/*    $scope.login.usuario = "lenibaldassarre@gmail.com";
     $scope.login.clave = "123456";
-
+*/
     if (firebase.auth().currentUser != null)
     {
       if (firebase.auth().currentUser.emailVerified == false)
@@ -328,12 +328,24 @@ $scope.doLoginGoogle = function(){
     ionicMaterialInk.displayEffect();
 })
 
-.controller('ActivityCtrl', function($scope, $stateParams, $timeout, ionicMaterialMotion, ionicMaterialInk) {
+.controller('ActivityCtrl', function($scope, $stateParams, ionicMaterialMotion,$timeout, ionicMaterialInk,FactoryUsuario,Servicio) {
     $scope.$parent.showHeader();
     $scope.$parent.clearFabs();
     $scope.isExpanded = true;
     $scope.$parent.setExpanded(true);
     $scope.$parent.setHeaderFab('right');
+    $scope.desafio = {};
+    $scope.inicial = {
+          usuario:"",
+          fecha:"",
+          id:"",
+          titulo:"",
+          detalle:"",
+          fechaInicio:"",
+          fechaFin:"",
+            };
+    $scope.desafio = angular.copy($scope.inicial);
+
 
     $timeout(function() {
         ionicMaterialMotion.fadeSlideIn({
@@ -343,7 +355,56 @@ $scope.doLoginGoogle = function(){
 
     // Activate ink for controller
     ionicMaterialInk.displayEffect();
-})
+
+
+    $scope.crearDesafio = function(){
+      $scope.desafio.usuario = FactoryUsuario.Logueado;
+
+    if ($scope.desafio.usuario != null)
+    {
+
+        $scope.cargando = true;
+        $scope.desafio.fecha = new Date().valueOf();
+        $scope.desafio.id = $scope.desafio.usuario.nombre+$scope.desafio.fecha;
+
+         $timeout(function() {
+           
+                    try
+                    {
+                      if($scope.desafio.usuario != "")
+                      {                        
+                        alert("Desafio cargado");
+                        //console.log($scope.desafio);
+                        Servicio.Guardar("/Desafios/"+$scope.desafio.usuario.nombre+$scope.desafio.fecha+"/",$scope.desafio);
+                        
+                      }
+                      else
+                      {
+                        $scope.showAlert("No se pudo cargar el accidente. ","Intente nuevamente");   
+                      }
+                    }
+                    catch(error)
+                    {
+                      console.log(error);
+                      alert("No se pudo cargar el desafio");
+                    } 
+        }, 1000);
+         $scope.reset();
+         //console.log($scope.desafio);
+         }
+         else
+         {
+           alert("Usted no está logueado.");              
+         }
+    }        
+          
+          $scope.reset = function () {
+                     $timeout(function() { 
+            $scope.desafio = angular.copy($scope.inicial);          
+                    }, 3000);                  
+             }
+
+    })
 
 .controller('GalleryCtrl', function($scope, $stateParams, $timeout, ionicMaterialInk, ionicMaterialMotion) {
     $scope.$parent.showHeader();
