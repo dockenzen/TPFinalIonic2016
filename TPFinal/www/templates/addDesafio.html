@@ -20,6 +20,9 @@
             <label><h3>Fecha de finalizacion</h3></label>
             <input ng-model="desafio.fechaFin"  type="date" class="inputs" required></input><br>
 
+            <label><h3>Creditos disponibles</h3></label>
+            <input ng-model="usuario.creditos"  type="number" max="{{usuario.creditos}}" class="inputs" required></input><br>
+
         </div>
         <div class="padding">
             <button ng-controller="ActivityCtrl" ng-click="crearDesafio()" ng-disabled="formAlta.$invalid" class="button button-full button-block icon ion-android-send">Generar Desafío</button>

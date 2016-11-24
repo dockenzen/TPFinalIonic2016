@@ -104,6 +104,19 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ionic-material', 'io
         }
     })
 
+    .state('app.registro', {
+        url: '/registro',
+        views: {
+            'menuContent': {
+                templateUrl: 'templates/registro.html',
+                controller: 'registroCtrl'
+            },
+            'fabContent': {
+                template: ''
+            }
+        }
+    })
+
     .state('app.desafio', {
         url: '/addDesafio',
         views: {
