@@ -1,12 +1,6 @@
 <ion-view view-title="Desafie a sus amigos !" align-title="left">
     <ion-content style="background: url(img/login.jpg) center; background-size: cover;">
-        <div class="hero no-header flat">
-            <div class="content">
-                <div class="app-icon"></div>
-                <h1></h1>
-            </div>
-        </div>
-
+    <br><br>
         <form id="formAlta" name="formAlta" enctype="multipart/form-data" novalidate >
         <div class="list" style="text-align:center"  >
         <label><h3>Titule su desafio</h3></label>
@@ -21,11 +15,12 @@
             <input ng-model="desafio.fechaFin"  type="date" class="inputs" required></input><br>
 
             <label><h3>Creditos disponibles</h3></label>
-            <input ng-model="usuario.creditos"  type="number" max="{{usuario.creditos}}" class="inputs" required></input><br>
-
+            <center><h4 id="globo"><code>{{desafio.creditosApostados}}</code></h4></center>
+            <input id="valor" step="1" ng-model="desafio.creditosApostados" type="range" min="0" max="100" class="inputs" required></input>
         </div>
+
         <div class="padding">
-            <button ng-controller="ActivityCtrl" ng-click="crearDesafio()" ng-disabled="formAlta.$invalid" class="button button-full button-block icon ion-android-send">Generar Desafío</button>
+            <button ng-click="crearDesafio()" ng-disabled="formAlta.$invalid " class="button button-full button-block icon ion-android-send">Generar Desafío</button>
         </div>
     </form>
         

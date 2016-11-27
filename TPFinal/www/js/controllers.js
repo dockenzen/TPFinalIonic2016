@@ -91,7 +91,7 @@ angular.module('starter.controllers', [])
 
 })
 
-.controller('LoginCtrl', function($scope, $timeout, $stateParams, ionicMaterialInk,Servicio,FactoryUsuario) {
+.controller('LoginCtrl', function($state,$scope, $timeout, $stateParams, ionicMaterialInk,Servicio,FactoryUsuario) {
     
         $scope.$parent.clearFabs();
             $timeout(function() {
@@ -103,11 +103,10 @@ angular.module('starter.controllers', [])
     
 try{
 
-    $scope.login = {};
-    $scope.login.creditos = 1000;
+    $scope.login = {};    
     console.log($scope.login);
-/*    $scope.login.usuario = "lenibaldassarre@gmail.com";
-    $scope.login.clave = "123456";*/
+    $scope.login.usuario = "lenibaldassarre@gmail.com";
+    $scope.login.clave = "123456";
     $scope.mensajeLogin = {};
     $scope.mensajeLogin.ver = false;
     $scope.cargando = false;
@@ -161,6 +160,7 @@ $scope.Loguear = function (){
         Servicio.Cargar('/usuario/' + usuario.displayName).on('value',
           function(respuesta) {
             FactoryUsuario.Logueado = respuesta.val();
+//            console.log(FactoryUsuario.Logueado);
           },
           function(error) {
             // body...
@@ -176,14 +176,14 @@ $scope.Loguear = function (){
             {
               try
               {
-                FCMPlugin.subscribeToTopic('borbotones');
+         //       FCMPlugin.subscribeToTopic('borbotones');
               }
               catch(error)
               {
                 console.info("No es un dispositivo móvil");
               }
               $scope.verificado = 'si';
-              //$state.go("app.juegos");
+              $state.go("app.desafio");
             }
           $scope.cargando = false;
         }, 1000);
@@ -254,6 +254,7 @@ $scope.Loguear = function (){
           $scope.mensajeLogin.ver = true;
           $scope.mensajeLogin.mensaje = "Gracias por utilizar la aplicación.";
           $scope.mensajeLogin.estilo = "alert-success";
+       //   $scope.login = {};
         });
       });
     }
@@ -359,73 +360,132 @@ $scope.doLoginGoogle = function(){
 
 })
 
-.controller('FriendsCtrl', function($scope, $stateParams, $timeout, ionicMaterialInk, ionicMaterialMotion) {
-    // Set Header
-    $scope.$parent.showHeader();
-    $scope.$parent.clearFabs();
-    $scope.$parent.setHeaderFab('left');
+.controller('FriendsCtrl', function($state,$scope, $stateParams, $timeout, ionicMaterialInk, ionicMaterialMotion,Servicio,FactoryUsuario) {
 
-    // Delay expansion
-    $timeout(function() {
-        $scope.isExpanded = true;
-        $scope.$parent.setExpanded(true);
-    }, 300);
+    $scope.DesafiosDisponibles = [];
+    var i = 0;
 
-    // Set Motion
-    ionicMaterialMotion.fadeSlideInRight();
+    Servicio.Cargar('/Desafios')
+        .on('child_added',function(snapshot)
+            {                
+                var fecha_parse = new Date(snapshot.val().fecha);
+                var anio = fecha_parse.getFullYear();
+                var mes = fecha_parse.getMonth()+1;
+                var dia = fecha_parse.getDate();
+                var hora = fecha_parse.getHours();
+                var minutos = fecha_parse.getMinutes();
+                if(minutos.toString().length == 1)
+                {
+                    minutos = "0" + minutos;
+                }
+                if(hora.toString().length == 1)
+                {
+                    hora = "0" + hora;
+                }        
+                var fecha = dia+"/"+mes+"/"+anio+" "+hora+":"+minutos;
+                $scope.DesafiosDisponibles.push(snapshot.val());
+                $scope.DesafiosDisponibles[i].fecha = fecha;
+                i = i + 1;
+                
+            });
+        
+        console.log($scope.DesafiosDisponibles);
 
-    // Set Ink
-    ionicMaterialInk.displayEffect();
-})
-
-.controller('ProfileCtrl', function($scope, $stateParams, $timeout, ionicMaterialMotion, ionicMaterialInk) {
-    // Set Header
-    $scope.$parent.showHeader();
-    $scope.$parent.clearFabs();
-    $scope.isExpanded = false;
-    $scope.$parent.setExpanded(false);
-    $scope.$parent.setHeaderFab(false);
-
-    // Set Motion
-    $timeout(function() {
-        ionicMaterialMotion.slideUp({
-            selector: '.slide-up'
-        });
-    }, 300);
-
-    $timeout(function() {
-        ionicMaterialMotion.fadeSlideInRight({
-            startVelocity: 3000
-        });
-    }, 700);
-
-    // Set Ink
-    ionicMaterialInk.displayEffect();
-})
-
-.controller('ActivityCtrl', function($scope, $stateParams, ionicMaterialMotion,$timeout, ionicMaterialInk,FactoryUsuario,Servicio) {
-    $scope.$parent.showHeader();
+             $scope.$parent.showHeader();
     $scope.$parent.clearFabs();
     $scope.isExpanded = true;
     $scope.$parent.setExpanded(true);
     $scope.$parent.setHeaderFab('right');
-    $scope.desafio = {};
-    $scope.inicial = {
-          usuario:"",
-          fecha:"",
-          id:"",
-          titulo:"",
-          detalle:"",
-          fechaInicio:"",
-          fechaFin:"",
-            };
-    $scope.desafio = angular.copy($scope.inicial);
-
 
     $timeout(function() {
         ionicMaterialMotion.fadeSlideIn({
             selector: '.animate-fade-slide-in .item'
         });
+    }, 1000);
+
+    // Activate ink for controller
+    ionicMaterialInk.displayEffect();
+
+
+    $scope.definir = function(desafio){
+    
+    
+    console.log(desafio);
+    
+        desafio.habilitado = false;
+        var updates = {};
+        updates['/Desafios/' + desafio.id +"/habilitado" ] = false;
+        updates['/Desafios/' + desafio.id +"/ganador" ] = false;
+        updates['/Desafios/' + desafio.id +"/usuario_cerro" ] = FactoryUsuario.Logueado.nombre;
+        console.info(updates);
+        
+        $state.go('app.friends');
+    };
+
+
+
+})
+
+.controller('ProfileCtrl', function($scope, $stateParams, $timeout, ionicMaterialMotion, ionicMaterialInk,FactoryUsuario,Servicio) {
+    $scope.$parent.showHeader();
+    $scope.$parent.clearFabs();
+    $scope.isExpanded = true;
+    $scope.$parent.setExpanded(true);
+    $scope.$parent.setHeaderFab('right');
+
+    $timeout(function() {
+        ionicMaterialMotion.fadeSlideIn({
+            selector: '.animate-fade-slide-in .item'
+        });
+    
+
+    }, 200);
+
+    // Activate ink for controller
+    ionicMaterialInk.displayEffect();
+
+})
+
+.controller('ActivityCtrl', function($state,$scope, $stateParams, ionicMaterialMotion,$timeout, ionicMaterialInk,FactoryUsuario,Servicio) {
+    
+    
+    $scope.desafio = {};
+    $scope.inicial = {
+          usuario:"",
+          fecha:"",
+          id:"",
+          ganador:"",
+          titulo:"",
+          detalle:"",
+          fechaInicio:"",
+          fechaFin:"",
+          creditosApostados:0,
+          habilitado:true,
+          respuestaAdversario:"", //para hacer
+          usuarioAdversario:""
+            };
+    $scope.desafio = angular.copy($scope.inicial);
+
+      $timeout(function() {
+        $scope.desafio.usuario = FactoryUsuario.Logueado;        
+    console.log($scope.desafio);
+
+    }, 1000);
+      $scope.max = $scope.desafio.usuario.creditos;
+
+
+    $scope.$parent.showHeader();
+    $scope.$parent.clearFabs();
+    $scope.isExpanded = true;
+    $scope.$parent.setExpanded(true);
+    $scope.$parent.setHeaderFab('right');
+
+    $timeout(function() {
+        ionicMaterialMotion.fadeSlideIn({
+            selector: '.animate-fade-slide-in .item'
+        });
+    
+
     }, 200);
 
     // Activate ink for controller
@@ -433,43 +493,55 @@ $scope.doLoginGoogle = function(){
 
 
     $scope.crearDesafio = function(){
-      $scope.desafio.usuario = FactoryUsuario.Logueado;
 
-    if ($scope.desafio.usuario != null)
-    {
+ //       console.log($scope.desafio);
 
-        $scope.cargando = true;
-        $scope.desafio.fecha = new Date().valueOf();
-        $scope.desafio.id = $scope.desafio.usuario.nombre+$scope.desafio.fecha;
+        if ($scope.desafio.usuario != null && $scope.desafio.usuario != "")
+        {
+            if($scope.desafio.creditosApostados > 0 )
+            {
+                $scope.cargando = true;
+                $scope.desafio.fecha = new Date().valueOf();
+                $scope.desafio.id = $scope.desafio.usuario.nombre+$scope.desafio.fecha;
 
-         $timeout(function() {
-           
-                    try
-                    {
-                      if($scope.desafio.usuario != "")
-                      {                        
-                        alert("Desafio cargado");
-                        //console.log($scope.desafio);
-                        Servicio.Guardar("/Desafios/"+$scope.desafio.usuario.nombre+$scope.desafio.fecha+"/",$scope.desafio);
-                        
-                      }
-                      else
-                      {
-                        $scope.showAlert("No se pudo cargar el accidente. ","Intente nuevamente");   
-                      }
-                    }
-                    catch(error)
-                    {
-                      console.log(error);
-                      alert("No se pudo cargar el desafio");
-                    } 
-        }, 1000);
-         $scope.reset();
-         //console.log($scope.desafio);
-         }
-         else
+                $timeout(function() {
+               
+                        try
+                        {
+                          if($scope.desafio.usuario != "")
+                          {                        
+                            //console.log($scope.desafio);
+                            Servicio.Guardar("/Desafios/"+$scope.desafio.usuario.nombre+$scope.desafio.fecha+"/",$scope.desafio);
+//                            alert("Desafio cargado");
+
+                            var userActual = FactoryUsuario.Logueado;
+                            console.log(userActual);
+                            var name = firebase.auth().currentUser.displayName;
+                            var update={};
+                            update['/usuario/' + name +"/creditos" ] = userActual.creditos - $scope.desafio.creditosApostados ;
+                            Servicio.Editar(update);
+                            console.log(update);
+                          }
+                          else
+                          {
+                            $scope.showAlert("No se pudo cargar el desafio. ","Intente nuevamente");   
+                          }
+                        }
+                        catch(error)
+                        {
+                          console.log(error);
+                          alert("No se pudo cargar el desafio");
+                        } 
+                }, 1000);
+                 $scope.reset();
+                 //console.log($scope.desafio);
+            }else
+             {
+                alert("No tiene suficientes creditos para inicir un desafio");                    
+             }
+        }else
          {
-           alert("Usted no está logueado.");              
+            alert("Usted no está logueado.");              
          }
     }        
           
@@ -542,7 +614,7 @@ $scope.doLoginGoogle = function(){
           fechaCreacion: fecha,
           fechaAcceso: fecha,
           perfil:"cliente",
-          creditos:1000
+          creditos:100
         };
         Servicio.Guardar('usuario/' + $scope.login.nombre, usuario);
 

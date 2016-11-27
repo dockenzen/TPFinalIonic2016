@@ -13,11 +13,14 @@
         </div>
         <div class="padding">
             <button ng-click="Loguear()" class="button button-full button-assertive ink">Login</button>
-            <br><br><br><br>
+            <BR>
             <center>
             <button ui-sref="app.registro" class="button expanded button-bar-positive">Registrarse</button>
             </center>
         </div>
+        <div class="bar button button-flat" ng-if="logueado == 'no'" ng-click="resetPassword()">
+        <h1 class="title sans-pro-light"  style="text-align:center">Olvide mi contraseña</h1>
+      </div>
 
         <div class="padding">
           <div class="{{mensajeLogin}}" ng-if="mensajeLogin.ver" style="text-align:center;color: blue;font-weight: 900;">
@@ -38,9 +41,7 @@
         </div>
       </div>
     </div>
-      <div class="bar button button-flat" ng-if="logueado == 'no'" ng-click="resetPassword()">
-        <h1 class="title sans-pro-light"  style="text-align:center">Olvide mi contraseña</h1>
-      </div>
+      
     <div class="overlay" ng-show="cargando">
       <div class="overlayContent">
         <ion-spinner icon="circles"></ion-spinner><span style="font-size:26px; color:#000000">Ingresando..</span>
@@ -49,10 +50,11 @@
 
 
         
-        <div class="button-bar social-login">
+   <!--     <div class="button-bar social-login">
             <button ng-click="doLoginGoogle()" class="button button-small button-border icon-left ion-social-google button-assertive-900">Google+</button>
             <button ng-click="doLoginGithub()" class="button button-small button-border icon-left ion-social-github button-balanced-900">Github</button>
             <button ng-click="doLoginFacebook()" class="button button-small button-border icon-left ion-social-facebook button-positive-900">Facebook</button>            
         </div>
+        -->
     </ion-content>
 </ion-view>
