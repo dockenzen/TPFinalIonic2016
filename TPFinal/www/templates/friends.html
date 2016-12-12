@@ -20,6 +20,9 @@
         <button class="ion-minus-circled" ng-click="definir(d)" ng-if="d.usuario.perfil != 'cliente'" style="background-color: red;">
           <span style="font-family:arial; color:white; font-size: 14px;">Cerrar</span>          
       </button>
+      <button class="ion-minus-circled" ng-click="aceptar(d)" ng-if="d.usuario.perfil == 'cliente'" style="background-color: red;">
+          <span style="font-family:arial; color:white; font-size: 14px;">Aceptar</span>          
+      </button>
       </center>
     </div>    
 </div>
