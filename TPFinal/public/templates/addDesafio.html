@@ -16,8 +16,7 @@
 
             <label><h3>Creditos disponibles</h3></label>
             <center><h4 id="globo"><code>{{desafio.creditosApostados}}</code></h4></center>
-            <input step="1" ng-model="desafio.creditosApostados" type="range" min="1" max="{{max}}" class="inputs" required></input>
-            <input type="hidden" ng-model="max">
+            <input id="valor" step="1" ng-model="desafio.creditosApostados" type="range" min="0" max="{{max}}" class="inputs" required></input>
         </div>
 
         <div class="padding">

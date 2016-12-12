@@ -3,6 +3,7 @@
 
 angular.module('starter.controllers', [])
 
+
 .controller('AppCtrl', function($scope, $ionicModal, $ionicPopover, $timeout) {
     // Form data for the login modal
     $scope.loginData = {};
@@ -159,7 +160,7 @@ $scope.Loguear = function (){
 
         Servicio.Cargar('/usuario/' + usuario.displayName).on('value',
           function(respuesta) {
-            FactoryUsuario.Logueado = respuesta.val();
+            FactoryUsuario.setUser(respuesta.val());
 //            console.log(FactoryUsuario.Logueado);
           },
           function(error) {
@@ -268,48 +269,6 @@ $scope.Loguear = function (){
   };
 
 
-
-
-$scope.doLoginGoogle = function(){
-      var provider = new firebase.auth.GoogleAuthProvider();
-      firebase.auth().signInWithPopup(provider)
-        .then(function(response){
-          console.info("SUCCESS GOOGLE+: ", response);
-            $scope.checkForProviderData();
-              $timeout(function(){
-                $scope.afterLoginSuccess();
-              },100);
-        },function(error){
-          console.info("ERROR GOOGLE+: ", error);
-          });
-    };
-
-    $scope.doLoginGithub = function (){
-    var provider = new firebase.auth.GithubAuthProvider();
-    provider.addScope('repo');
-
-    firebase.auth().signInWithPopup(provider).then(function(result) {
-      // This gives you a GitHub Access Token. You can use it to access the GitHub API.
-      var token = result.credential.accessToken;
-      // The signed-in user info.
-      var user = result.user;
-
-      console.info(user);
-
-    }).catch(function(error) {
-      
-      // Handle Errors here.
-      var errorCode = error.code;
-      var errorMessage = error.message;
-      // The email of the user's account used.
-      var email = error.email;
-      // The firebase.auth.AuthCredential type that was used.
-      var credential = error.credential;
-      console.info(errorMessage);
-      // ...
-    });
-  };
-
   $scope.resetPassword = function(){
 
     try
@@ -336,27 +295,6 @@ $scope.doLoginGoogle = function(){
       console.info("Ha ocurrido un error en Resetear(). " + error);
     }
   };
-
-
-
-    
-    $scope.doLoginFacebook = function(){
-      var provider = new firebase.auth.FacebookAuthProvider();
-      firebase.auth().signInWithPopup(provider)
-        .then(function(response){
-          console.info("SUCCESS Facebook: ", response);
-          $scope.checkForProviderData();
-          $timeout(function(){
-              $scope.afterLoginSuccess();
-            },100);
-        },function(error){
-          console.info("ERROR Facebook: ", error);
-        });
-    };
-
-
-
-
 
 })
 
@@ -446,7 +384,7 @@ $scope.doLoginGoogle = function(){
 
 })
 
-.controller('ActivityCtrl', function($state,$scope, $stateParams, ionicMaterialMotion,$timeout, ionicMaterialInk,FactoryUsuario,Servicio) {
+.controller('ActivityCtrl', function($q,$state,$scope, $stateParams, ionicMaterialMotion,$timeout, ionicMaterialInk,FactoryUsuario,Servicio) {
     
     
     $scope.desafio = {};
@@ -467,12 +405,9 @@ $scope.doLoginGoogle = function(){
             };
     $scope.desafio = angular.copy($scope.inicial);
 
-      $timeout(function() {
-        $scope.desafio.usuario = FactoryUsuario.Logueado;        
-        console.log($scope.desafio);
-    }, 1000);
-      $scope.max = $scope.desafio.usuario.creditos;
-      console.log($scope.max);
+    var usuario = FactoryUsuario.getUser();
+    $scope.max = usuario.creditos;
+
 
     $scope.$parent.showHeader();
     $scope.$parent.clearFabs();
@@ -486,7 +421,7 @@ $scope.doLoginGoogle = function(){
         });
     
 
-    }, 200);
+    }, 1500);
 
     // Activate ink for controller
     ionicMaterialInk.displayEffect();
@@ -514,7 +449,7 @@ $scope.doLoginGoogle = function(){
                             Servicio.Guardar("/Desafios/"+$scope.desafio.usuario.nombre+$scope.desafio.fecha+"/",$scope.desafio);
 //                            alert("Desafio cargado");
 
-                            var userActual = FactoryUsuario.Logueado;
+                            var userActual = FactoryUsuario.getUser();
                             console.log(userActual);
                             var name = firebase.auth().currentUser.displayName;
                             var update={};
@@ -524,7 +459,7 @@ $scope.doLoginGoogle = function(){
                           }
                           else
                           {
-                            $scope.showAlert("No se pudo cargar el desafio. ","Intente nuevamente");   
+                            alert("No se pudo cargar el desafio. ","Intente nuevamente");   
                           }
                         }
                         catch(error)
@@ -627,7 +562,7 @@ $scope.doLoginGoogle = function(){
 
             Servicio.Cargar('/usuario/' + usuario.displayName).on('value',
               function(respuesta) {
-                FactoryUsuario.Logueado = respuesta.val();
+                FactoryUsuario.setUser(respuesta.val());
               },
               function(error) {
                 // body...
@@ -668,5 +603,4 @@ $scope.doLoginGoogle = function(){
 
 
 })
-
 ;
