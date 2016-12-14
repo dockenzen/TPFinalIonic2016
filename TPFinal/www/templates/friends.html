@@ -2,7 +2,7 @@
 <ion-content style="background: url(img/login.jpg) center; background-size: cover;">
     <ion-content ng-class="{expanded:isExpanded}" ng-controller="FriendsCtrl" class="animate-fade-slide-in">
 <div class="item card-item" ng-repeat="d in DesafiosDisponibles">
-    <div class="card stable-bg ink ink-dark" >
+    <div class="card stable-bg ink ink-dark" ng-if="d.fechaFin > hoy" >
         <div  class="item item-text-wrap">
         <span class="item-note">&nbsp;
         Apostó<br>
@@ -20,7 +20,7 @@
         <button class="ion-minus-circled" ng-click="definir(d)" ng-if="d.usuario.perfil != 'cliente'" style="background-color: red;">
           <span style="font-family:arial; color:white; font-size: 14px;">Cerrar</span>          
       </button>
-      <button class="ion-minus-circled" ng-click="aceptar(d)" ng-if="d.usuario.perfil == 'cliente'" style="background-color: red;">
+      <button class="ion-minus-circled" ng-click="aceptar(d)" ng-if="d.usuario.perfil == 'cliente' && d.usuario.correo != usuario.correo" style="background-color: red;">
           <span style="font-family:arial; color:white; font-size: 14px;">Aceptar</span>          
       </button>
       </center>

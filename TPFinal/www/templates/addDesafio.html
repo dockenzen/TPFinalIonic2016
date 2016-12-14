@@ -9,18 +9,16 @@
             <label><h3>Cual reto improndrá ?</h3></label>
             <textarea ng-model="desafio.detalle" highlight-color="energized" type="text" class="inputs" required></textarea><br>
 
-            <label><h3>Fecha de inicio</h3></label>
-            <input ng-model="desafio.fechaInicio" highlight-color="energized" type="date" class="inputs" required></input><br>
             <label><h3>Fecha de finalizacion</h3></label>
             <input ng-model="desafio.fechaFin"  type="date" class="inputs" required></input><br>
 
             <label><h3>Creditos disponibles</h3></label>
             <center><h4 id="globo"><code>{{desafio.creditosApostados}}</code></h4></center>
-            <input id="valor" step="1" ng-model="desafio.creditosApostados" type="range" min="0" max="{{max}}" class="inputs" required></input>
+            <input id="valor" step="1" ng-model="desafio.creditosApostados" type="range" min="1" max="100" class="inputs" required></input>
         </div>
 
         <div class="padding">
-            <button ng-click="crearDesafio()" ng-disabled="formAlta.$invalid " class="button button-full button-block icon ion-android-send">Generar Desafío</button>
+            <button ng-click="crearDesafio()" ng-disabled="formAlta.$invalid" class="button button-full button-block icon ion-android-send">Generar Desafío</button>
         </div>
     </form>
         
