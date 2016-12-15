@@ -119,13 +119,13 @@ try{
       {
         console.info("no verificado");
         $scope.verificado = 'no';
-        $scope.logueado = 'no';
+        $scope.logueado = 'si';
         $scope.cartelVerificar = false;
       }
       else
       {
-        $scope.logueado = 'si';
-        $scope.verificado = 'si';
+        $scope.logueado = 'no';
+        $scope.verificado = 'no';
         $scope.cartelVerificar = false;
       }
     }
@@ -609,7 +609,7 @@ $scope.aceptar = function(desafio){
 
             );
 
-            $state.go("login");
+            $state.go("app.login");
           }, function(error) {
             // An error happened.
           });

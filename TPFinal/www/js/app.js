@@ -63,7 +63,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'ionic-material', 'io
                 controller: ''
             },
             'fabContent': {
-                template: '<button id="fab-friends" ng-controller="FriendsCtrl" ></button>',
+                template: '<button id="fab-friends"></button>',
                 controller: function ($timeout) {
                     $timeout(function () {
                         document.getElementById('fab-friends').classList.toggle('on');
