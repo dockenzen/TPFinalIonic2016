@@ -105,7 +105,7 @@ angular.module('starter.controllers', [])
 try{
 
     $scope.login = {};    
-    console.log($scope.login);
+    //console.log($scope.login);
     $scope.login.usuario = "lenibaldassarre@gmail.com";
     $scope.login.clave = "123456";
     $scope.mensajeLogin = {};
@@ -124,8 +124,8 @@ try{
       }
       else
       {
-        $scope.logueado = 'no';
-        $scope.verificado = 'no';
+        $scope.logueado = 'si';
+        $scope.verificado = 'si';
         $scope.cartelVerificar = false;
       }
     }
@@ -351,8 +351,8 @@ pendiente
 definido
 */
 $scope.aceptar = function(desafio){
-  $scope.desafio.usuarioAdversario = FactoryUsuario.getUser().nombre;
 
+  $state.go('app.gallery',{desId : desafio.id});
 
   };
     
@@ -362,11 +362,11 @@ $scope.aceptar = function(desafio){
     
     console.log(desafio);
     
-        desafio.habilitado = false;
+        desafio.estado = definido;
         var updates = {};
-        updates['/Desafios/' + desafio.id +"/habilitado" ] = false;
+        updates['/Desafios/' + desafio.id +"/estado" ] = "definido";
         updates['/Desafios/' + desafio.id +"/ganador" ] = false;
-        updates['/Desafios/' + desafio.id +"/usuario_cerro" ] = FactoryUsuario.getUser.nombre;
+
         console.info(updates);
         
         $state.go('app.friends');
@@ -403,6 +403,36 @@ $scope.aceptar = function(desafio){
 
 })
 
+
+.controller('MisDesafiosCtrl', function($scope, $stateParams, $timeout, ionicMaterialMotion, ionicMaterialInk,FactoryUsuario,Servicio) {
+    
+  $scope.$on('$ionicView.loaded', function () {
+    if(firebase.auth().currentUser == null){
+      $state.go('app.login');
+      }
+    });
+
+    $scope.$parent.showHeader();
+    $scope.$parent.clearFabs();
+    $scope.isExpanded = true;
+    $scope.$parent.setExpanded(true);
+    $scope.$parent.setHeaderFab('right');
+
+    $timeout(function() {
+        ionicMaterialMotion.fadeSlideIn({
+            selector: '.animate-fade-slide-in .item'
+        });
+    
+
+    }, 200);
+
+    // Activate ink for controller
+    ionicMaterialInk.displayEffect();
+
+})
+
+
+
 .controller('ActivityCtrl', function($q,$state,$scope, $stateParams, ionicMaterialMotion,$timeout, ionicMaterialInk,FactoryUsuario,Servicio) {
     
     
@@ -423,8 +453,8 @@ $scope.aceptar = function(desafio){
           detalle:"",
           fechaInicio:"",
           fechaFin:"",
-          creditosApostados:0,
-          habilitado:true,
+          creditosApostados:1,
+          estado:"creado",
           respuestaAdversario:"", //para hacer
           usuarioAdversario:""
             };
@@ -483,6 +513,8 @@ $scope.aceptar = function(desafio){
                             Servicio.Editar(update);
                             //console.log(update);
                             alert("Desafio creado con exito !");   
+
+
                           }
                           else
                           {
@@ -496,6 +528,7 @@ $scope.aceptar = function(desafio){
                         } 
                 }, 1000);
                  $scope.reset();
+                 $state.go('app.misDesafios');
                  //console.log($scope.desafio);
             }else
              {
@@ -518,30 +551,69 @@ $scope.aceptar = function(desafio){
 
     })
 
-.controller('GalleryCtrl', function($scope, $stateParams, $timeout, ionicMaterialInk, ionicMaterialMotion) {
+.controller('GalleryCtrl', function($state,$scope,$ionicHistory, $stateParams, $timeout, ionicMaterialInk, ionicMaterialMotion,Servicio) {
 
+
+$scope.desafio = {};
   $scope.$on('$ionicView.loaded', function () {
     if(firebase.auth().currentUser == null){
       $state.go('app.login');
     }
-  });
+    else
+    {
+    var idDesafio = $stateParams.desId;    
+    
+    Servicio.Cargar('/Desafios/' + idDesafio).on('child_added',
+          function(respuesta) {            
+            $scope.desafio = respuesta.val();
+            console.log($scope.desafio);                                                              
+          },
+          function(error) {
+            console.log(error);
+          }
+        );
+    }
+  });    
+                $scope.$parent.showHeader();
+                $scope.$parent.clearFabs();
+                $scope.isExpanded = true;
+                $scope.$parent.setExpanded(true);
+                $scope.$parent.setHeaderFab(false);
 
-    $scope.$parent.showHeader();
-    $scope.$parent.clearFabs();
-    $scope.isExpanded = true;
-    $scope.$parent.setExpanded(true);
-    $scope.$parent.setHeaderFab(false);
+                // Activate ink for controller
+                ionicMaterialInk.displayEffect();
 
-    // Activate ink for controller
-    ionicMaterialInk.displayEffect();
+                ionicMaterialMotion.pushDown({
+                    selector: '.push-down'
+                });
+                ionicMaterialMotion.fadeSlideInRight({
+                    selector: '.animate-fade-slide-in .item'
+                });
 
-    ionicMaterialMotion.pushDown({
-        selector: '.push-down'
-    });
-    ionicMaterialMotion.fadeSlideInRight({
-        selector: '.animate-fade-slide-in .item'
-    });
 
+  $scope.aceptado = function(desafio)
+  {    
+      desafio.usuarioAdversario = FactoryUsuario.getUser().nombre;
+      var name = firebase.auth().currentUser.displayName;
+
+   if(parseInt(desafio.creditosApostados) <= desafio.usuarioAdversario.creditos)
+    {
+      var updateCreditos={};
+      var updateDesafio={};
+      updateCreditos['/usuario/' + name +"/creditos" ] = userActual.creditos - desafio.creditosApostados ;  
+      Servicio.Editar(update);
+      updateDesafio['/Desafios/' + desafio.id +"/estado" ] = "aceptado";
+      updateDesafio['/Desafios/' + desafio.id +"/usuarioAdversario" ] = desafio.usuarioAdversario;
+      updateDesafio['/Desafios/' + desafio.id +"/respuestaAdversario" ] = desafio.respuestaAdversario;
+      Servicio.Editar(updateDesafio);
+      alert("Espere el desempate ");
+    }
+    else
+    {
+       alert("No tiene suficientes creditos para aceptar el desafio");                    
+    }
+    
+  }
 })
 
 .controller('registroCtrl', function($scope,$state, $stateParams, $timeout, ionicMaterialInk, ionicMaterialMotion, Servicio, FactoryUsuario) {
@@ -641,5 +713,4 @@ $scope.aceptar = function(desafio){
   };
 
 
-})
-;
+});
