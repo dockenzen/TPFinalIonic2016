@@ -433,7 +433,7 @@ $scope.aceptar = function(desafio){
 
 
 
-.controller('ActivityCtrl', function($q,$state,$scope, $stateParams, ionicMaterialMotion,$timeout, ionicMaterialInk,FactoryUsuario,Servicio) {
+.controller('ActivityCtrl', function($state,$scope, $stateParams, ionicMaterialMotion,$timeout, ionicMaterialInk,FactoryUsuario,Servicio,$cordovaBarcodeScanner,QrService) {
     
     
   $scope.$on('$ionicView.loaded', function () {
@@ -543,19 +543,39 @@ $scope.aceptar = function(desafio){
          }
     }        
           
-          $scope.reset = function () {
+      $scope.reset = function () {
                      $timeout(function() { 
             $scope.desafio = angular.copy($scope.inicial);          
                     }, 3000);                  
-             }
+      }
 
-            $scope.cargarCredito= function(saldo){
-            var userActual = FactoryUsuario.getUser();
-            updateCreditos['/usuario/' + name +"/creditos" ] = userActual.creditos + parseInt(saldo);                  
-            Servicio.Editar(updateDesafio);
-            alert("carga exitosa");
-            $state.go('app.friends');
-            }
+      $scope.cargarCredito= function(saldo){
+          document.forms[0].elements['msg'].value = saldo;
+          QrService.update_qrcode();            
+      }
+
+      $scope.leerqr = function(){
+
+        document.addEventListener("deviceready", function (saldo) {                
+
+          $cordovaBarcodeScanner
+           .scan()
+             .then(function(barcodeData) {              
+              /*
+              var updateCreditos = [];
+              var userActual = FactoryUsuario.getUser();
+              updateCreditos['/usuario/' + name +"/creditos" ] = userActual.creditos + parseInt(saldo);                  
+              Servicio.Editar(updateDesafio);
+              alert("carga exitosa");
+              $state.go('app.friends');
+              */
+              }, function(error) {
+                  alert("No se pudo leer el codigo");
+                    console.log(error);
+             });
+
+        }, false);
+      }
 
     })
 

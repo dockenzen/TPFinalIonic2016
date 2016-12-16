@@ -150,7 +150,7 @@ p {
     margin-right: 10px; 
 
 }
-img {
+.imagen{
     width:30%;
     height:300px;
     float:left;
@@ -160,14 +160,13 @@ img {
 }
 
 .stroke {
-    border-radius: 5px;        
+
+border-radius: 5px;        
 text-align:center; 
-color: #000;
-background: #DA251D;
+color: black;
+background: white;
 font-family: impact;
-font-size: 36px;
-line-height: 70%;
-letter-spacing: 4px;
-text-shadow: 2px 2px 0px #fff, 2px 2px 0px #fff, 2px 2px 0px #fff, 2px 2px 0px #fff;
+
+
 padding:10px 0 10px;
 }

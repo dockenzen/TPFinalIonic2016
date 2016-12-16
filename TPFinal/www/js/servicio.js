@@ -21,24 +21,11 @@ angular.module('starter.servicio', [])
            {
                        datos.push(snapshot.val());
            });
-
-       return datos;
-
-    
+       return datos;    
     }
-
 
     function Cargar(ruta){
-      
-        return firebase.database().ref(ruta);
-          
-    
+        return firebase.database().ref(ruta);    
     }
-
-
-
-
-
-
 
 });
