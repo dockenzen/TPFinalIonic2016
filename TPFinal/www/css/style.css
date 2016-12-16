@@ -137,3 +137,37 @@ p {
     bottom: -10px;
     left: 50%;
 }
+.wrapper {
+    overflow:hidden;
+    width:100%;
+}
+.wrapper div {
+    /* cualquier altura mayor que el total de sumar la anchura de las img */
+    width:100%;
+
+    /* para evitar el margen superior de la primera fila */
+    margin-top:-10px;
+    margin-right: 10px; 
+
+}
+img {
+    width:30%;
+    height:300px;
+    float:left;
+    margin:5px 5px 0 5px;
+         
+
+}
+
+.stroke {
+    border-radius: 5px;        
+text-align:center; 
+color: #000;
+background: #DA251D;
+font-family: impact;
+font-size: 36px;
+line-height: 70%;
+letter-spacing: 4px;
+text-shadow: 2px 2px 0px #fff, 2px 2px 0px #fff, 2px 2px 0px #fff, 2px 2px 0px #fff;
+padding:10px 0 10px;
+}

@@ -549,6 +549,14 @@ $scope.aceptar = function(desafio){
                     }, 3000);                  
              }
 
+            $scope.cargarCredito= function(saldo){
+            var userActual = FactoryUsuario.getUser();
+            updateCreditos['/usuario/' + name +"/creditos" ] = userActual.creditos + parseInt(saldo);                  
+            Servicio.Editar(updateDesafio);
+            alert("carga exitosa");
+            $state.go('app.friends');
+            }
+
     })
 
 .controller('GalleryCtrl', function($state,$scope,$ionicHistory, $stateParams, $timeout, ionicMaterialInk, ionicMaterialMotion,Servicio) {
