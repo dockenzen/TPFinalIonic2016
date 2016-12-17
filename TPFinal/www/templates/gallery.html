@@ -2,6 +2,7 @@
     <ion-content ng-class="{expanded:isExpanded}" class="animate-fade-slide-in">          
 
           <div class="list card">
+          <h1>Usuario</h1>
               <div class="item item-avatar">
                 <img src="img/user.jpg"/>
                 <h2>Creado por {{desafio.usuario.nombre}}</h2>
@@ -26,7 +27,8 @@
                 </p>
               </div>
             </div>
-            <div class="list card" ng-if="usuarioActual.perfil == 'admin' ">
+            <div class="list card" >
+            <h1>Admin</h1>>
               <div class="item item-avatar">
                 <img src="img/user.jpg"/>
                 <h2>{{desafio.usuario.nombre}}</h2>
