@@ -177,7 +177,7 @@ $scope.Loguear = function (){
             {
               try
               {
-         //       FCMPlugin.subscribeToTopic('borbotones');
+                FCMPlugin.subscribeToTopic('desafios');
               }
               catch(error)
               {
@@ -300,13 +300,19 @@ $scope.Loguear = function (){
 
 .controller('FriendsCtrl', function($state,$scope, $stateParams, $timeout, ionicMaterialInk, ionicMaterialMotion,Servicio,FactoryUsuario) {
 
+$scope.DesafiosDisponibles = [];
+$scope.usuario = FactoryUsuario.getUser();
+
   $scope.$on('$ionicView.beforeEnter', function () {
     if(firebase.auth().currentUser == null){
       $state.go('app.login');
     }
   });
-    var usuario = FactoryUsuario.getUser();
+$scope.$on('$ionicView.leave', function () {
     $scope.DesafiosDisponibles = [];
+  });
+
+    
     $scope.hoy = new Date().valueOf();
     var i = 0;
  
@@ -315,7 +321,7 @@ $scope.Loguear = function (){
     Servicio.Cargar('/Desafios')
         .on('child_added',function(snapshot)
             {   
-              if(snapshot.val().usuario.correo != usuario.correo)
+              if(snapshot.val().usuario.correo != $scope.usuario.correo)
               {
                 console.log(snapshot);             
                 var fecha_parse = new Date(snapshot.val().fechaFin);
@@ -359,24 +365,16 @@ $scope.aceptar = function(desafio){
 
     $scope.definir = function(desafio){
     
-    
-    console.log(desafio);
-    
-        desafio.estado = definido;
-        var updates = {};
-        updates['/Desafios/' + desafio.id +"/estado" ] = "definido";
-        updates['/Desafios/' + desafio.id +"/ganador" ] = false;
 
-        console.info(updates);
+    $state.go('app.gallery',{desId : desafio.id});    
         
-        $state.go('app.friends');
     };
 
 
 
 })
 
-.controller('ProfileCtrl', function($scope, $stateParams, $timeout, ionicMaterialMotion, ionicMaterialInk,FactoryUsuario,Servicio) {
+.controller('ProfileCtrl', function($state,$scope, $stateParams, $timeout, ionicMaterialMotion, ionicMaterialInk,FactoryUsuario,Servicio) {
     
   $scope.$on('$ionicView.loaded', function () {
     if(firebase.auth().currentUser == null){
@@ -404,13 +402,40 @@ $scope.aceptar = function(desafio){
 })
 
 
-.controller('MisDesafiosCtrl', function($scope, $stateParams, $timeout, ionicMaterialMotion, ionicMaterialInk,FactoryUsuario,Servicio) {
+.controller('MisDesafiosCtrl', function($state,$scope, $stateParams, $timeout, ionicMaterialMotion, ionicMaterialInk,FactoryUsuario,Servicio) {
     
-  $scope.$on('$ionicView.loaded', function () {
+    $scope.$on('$ionicView.beforeEnter', function () {
     if(firebase.auth().currentUser == null){
       $state.go('app.login');
-      }
-    });
+    }
+  });
+    var usuario = FactoryUsuario.getUser();
+    $scope.DesafiosDisponibles = [];
+    $scope.hoy = new Date().valueOf();
+    var i = 0;
+ 
+    console.log($scope.usuario);
+
+    Servicio.Cargar('/Desafios')
+        .on('child_added',function(snapshot)
+            {   
+              if(snapshot.val().usuario.correo == usuario.correo)
+              {
+                console.log(snapshot);             
+                var fecha_parse = new Date(snapshot.val().fechaFin);
+                var anio = fecha_parse.getFullYear();
+                var mes = fecha_parse.getMonth()+1;
+                var dia = fecha_parse.getDate();                
+                var fecha = dia+"/"+mes+"/"+anio;
+                $scope.DesafiosDisponibles.push(snapshot.val());
+                $scope.DesafiosDisponibles[i].fecha = fecha;
+                i = i + 1;                                
+              }
+            });
+  
+
+
+
 
     $scope.$parent.showHeader();
     $scope.$parent.clearFabs();
@@ -433,7 +458,7 @@ $scope.aceptar = function(desafio){
 
 
 
-.controller('ActivityCtrl', function($state,$scope, $stateParams, ionicMaterialMotion,$timeout, ionicMaterialInk,FactoryUsuario,Servicio,$cordovaBarcodeScanner,QrService) {
+.controller('ActivityCtrl', function($state,$scope, $stateParams, ionicMaterialMotion,$timeout, ionicMaterialInk,FactoryUsuario,Servicio,$cordovaBarcodeScanner,QrService,SrvFirebase) {
     
     
   $scope.$on('$ionicView.loaded', function () {
@@ -512,7 +537,10 @@ $scope.aceptar = function(desafio){
                             update['/usuario/' + name +"/creditos" ] = userActual.creditos - desafio.creditosApostados ;
                             Servicio.Editar(update);
                             //console.log(update);
+                            SrvFirebase.EnviarNotificacion();
                             alert("Desafio creado con exito !");   
+
+
 
 
                           }
@@ -556,21 +584,23 @@ $scope.aceptar = function(desafio){
 
       $scope.leerqr = function(){
 
-        document.addEventListener("deviceready", function (saldo) {                
-
+        document.addEventListener("deviceready", function () {                
           $cordovaBarcodeScanner
            .scan()
-             .then(function(barcodeData) {              
-              /*
+             .then(function(barcodeData) {         
+                              
               var updateCreditos = [];
               var userActual = FactoryUsuario.getUser();
-              updateCreditos['/usuario/' + name +"/creditos" ] = userActual.creditos + parseInt(saldo);                  
+              updateCreditos['/usuario/' + name +"/creditos" ] = userActual.creditos + parseInt(barcodeData.text);                  
               Servicio.Editar(updateDesafio);
-              alert("carga exitosa");
+              
+              $timeout(function() { 
+                    alert("carga exitosa");
+                }, 1500);              
               $state.go('app.friends');
-              */
+
               }, function(error) {
-                  alert("No se pudo leer el codigo");
+                  //alert("No se pudo leer el codigo");
                     console.log(error);
              });
 
@@ -579,22 +609,28 @@ $scope.aceptar = function(desafio){
 
     })
 
-.controller('GalleryCtrl', function($state,$scope,$ionicHistory, $stateParams, $timeout, ionicMaterialInk, ionicMaterialMotion,Servicio) {
+.controller('GalleryCtrl', function($state,$scope,$ionicHistory, $stateParams, $timeout, ionicMaterialInk, ionicMaterialMotion,Servicio,FactoryUsuario) {
+
 
 
 $scope.desafio = {};
-  $scope.$on('$ionicView.loaded', function () {
+  $scope.$on('$ionicView.beforeEnter', function () {
     if(firebase.auth().currentUser == null){
       $state.go('app.login');
     }
     else
     {
+    $scope.usuarioActual = FactoryUsuario.getUser();
     var idDesafio = $stateParams.desId;    
     
-    Servicio.Cargar('/Desafios/' + idDesafio).on('child_added',
+    Servicio.Cargar('/Desafios/' + idDesafio).on('value',
           function(respuesta) {            
-            $scope.desafio = respuesta.val();
-            console.log($scope.desafio);                                                              
+            
+            var final = {};
+             final = respuesta.val();                  
+                        
+            $scope.desafio = final;                                                           
+            console.log($scope.desafio);   
           },
           function(error) {
             console.log(error);
@@ -621,26 +657,48 @@ $scope.desafio = {};
 
   $scope.aceptado = function(desafio)
   {    
-      desafio.usuarioAdversario = FactoryUsuario.getUser().nombre;
+      var usuarioAdversario = FactoryUsuario.getUser();
       var name = firebase.auth().currentUser.displayName;
 
-   if(parseInt(desafio.creditosApostados) <= desafio.usuarioAdversario.creditos)
+
+      console.log(desafio);      
+
+   if(parseInt(desafio.creditosApostados) <= parseInt(usuarioAdversario.creditos))
     {
       var updateCreditos={};
       var updateDesafio={};
-      updateCreditos['/usuario/' + name +"/creditos" ] = userActual.creditos - desafio.creditosApostados ;  
-      Servicio.Editar(update);
-      updateDesafio['/Desafios/' + desafio.id +"/estado" ] = "aceptado";
-      updateDesafio['/Desafios/' + desafio.id +"/usuarioAdversario" ] = desafio.usuarioAdversario;
+      updateCreditos['/usuario/' + name +"/creditos" ] = usuarioAdversario.creditos - desafio.creditosApostados ;  
+      Servicio.Editar(updateCreditos);
+      updateDesafio['/Desafios/' + desafio.id +"/estado" ] = "pendiente";
+      updateDesafio['/Desafios/' + desafio.id +"/usuarioAdversario" ] = usuarioAdversario;
       updateDesafio['/Desafios/' + desafio.id +"/respuestaAdversario" ] = desafio.respuestaAdversario;
       Servicio.Editar(updateDesafio);
-      alert("Espere el desempate ");
+      
+          $timeout(function() { 
+            alert("Espere el desempate ");
+           }, 2000);                  
+        $state.go('app.misDesafios');
+
     }
     else
     {
        alert("No tiene suficientes creditos para aceptar el desafio");                    
     }
     
+  }
+
+
+  $scope.definir = function(desafio,ganador){
+
+
+        var updates = {};
+        updates['/Desafios/' + desafio.id +"/estado" ] = "definido";
+        updates['/Desafios/' + desafio.id +"/ganador" ] = ganador;
+
+        console.info(updates);
+        
+        $state.go('app.friends');
+
   }
 })
 

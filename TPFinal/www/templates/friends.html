@@ -17,12 +17,12 @@
                 </div><br>
               </div>
         </div><center>
-      <button class="ion-minus-circled" ng-click="definir(d)" ng-if="usuario.perfil != cliente && d.estado == pendiente" style="background-color: red;">
-         <span style="font-family:arial; color:white; font-size: 14px;">Cerrar</span>
+      <button class="ion-minus-circled" ng-click="definir(d)" ng-if="usuario.perfil == 'admin' && d.estado == 'pendiente' " style="background-color: red;">
+         <span style="font-family:arial; color:white; font-size: 14px;">Definir</span>
       </button>
+      <button class="ion-minus-circled" ng-click="aceptar(d)" ng-if="usuario.perfil == 'cliente' && d.estado == 'creado' " style="background-color: red;">
 
-      <button class="ion-minus-circled" ng-click="aceptar(d)" ng-if="usuario.perfil == cliente && d.usuario.correo != usuario.correo && d.estado == creado" style="background-color: red;">
-          <span style="font-family:arial; color:white; font-size: 14px;">Aceptar desafio</span>
+          <span style="font-family:arial; color:white; font-size: 14px;">Ver desafio</span>
       </button>
       </center>
     </div>    

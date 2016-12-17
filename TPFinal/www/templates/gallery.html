@@ -1,31 +1,56 @@
-<ion-view view-title="{{desafio.titulo}}">
-    <ion-content ng-class="{expanded:isExpanded}" class="animate-fade-slide-in">            
-        <form>
-            <div class="list card">
+<ion-view view-title="Detalle del desafio">
+    <ion-content ng-class="{expanded:isExpanded}" class="animate-fade-slide-in">          
+
+          <div class="list card">
               <div class="item item-avatar">
-                <img src=".jpg">
+                <img src="img/user.jpg"/>
                 <h2>Creado por {{desafio.usuario.nombre}}</h2>
-                <p>{{desafio.fechaInicio}}</p>
-                <p>{{desafio.fechaFin}}</p>
               </div>
 
               <div class="item item-body">
-                <img class="full-image" src="delorean.jpg">
+                
                 <p>
                   <h3>El usuario propuso </h3>
                   <br>
                   {{desafio.detalle}}
                 </p>
                 <p>
-                    <input type="text" ng-model="desafio.respuestaAdversario" required />
+                <label>Usted le responde</label>
+                <ng-focus>
+                    <input id="resp" style="background-color:#C0C0C0" ng-model="desafio.respuestaAdversario" required />
+                </ng-focus>
                 </p>
                 <p>
-                  <button ng-click="aceptado({{desafio}})" class="subdued">Aceptar</button>
+                  <button ng-click="aceptado(desafio)" class="subdued">Aceptar</button>
                   <button ui-sref="app.friends" class="subdued">Volver atras</button>
                 </p>
               </div>
-
             </div>
-        </form>
+            <div class="list card" ng-if="usuarioActual.perfil == 'admin' ">
+              <div class="item item-avatar">
+                <img src="img/user.jpg"/>
+                <h2>{{desafio.usuario.nombre}}</h2>
+                <label>Propuso: </label>
+                <p>{{desafio.detalle}}</p>
+              </div>
+
+              <div class="item item-body">
+                
+                <p>
+                  <h3>El usuario {{desafio.usuarioAdversario}} dijo</h3>
+                  <br>
+                  
+                </p>
+                <p>
+                  {{desafio.respuestaAdversario}}
+                </p>
+
+                <p>
+                  <button ng-click="definir(desafio,desafio.usuario.nombre)" class="subdued">Gano {{desafio.usuario.nombre}}</button>
+                  
+                  <button ng-click="definir({{desafio}},{{desafio.usuarioAdversario.nombre}})" class="subdued">Gano {{desafio.usuarioAdversario.nombre}}</button>
+                </p>
+              </div>
+            </div>
     </ion-content>
 </ion-view>

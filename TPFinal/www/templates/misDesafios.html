@@ -1,0 +1,24 @@
+<ion-view view-title="Mis desafios!">
+<ion-content style="background: url(img/login.jpg) center; background-size: cover;">
+    <ion-content ng-class="{expanded:isExpanded}" ng-controller="MisDesafiosCtrl" class="animate-fade-slide-in">
+<div class="item card-item" ng-repeat="d in DesafiosDisponibles">
+    <div class="card stable-bg ink ink-dark" >
+        <div  class="item item-text-wrap">
+        <span class="item-note">&nbsp;
+        Apostó<br>
+            <i style="color:black font-size: 40px; font-weight: bold" class="icon ion-social-usd"></i>&nbsp; {{d.creditosApostados}} 
+        </span>
+        <span style="color:blue;">{{d.titulo}}</span>
+          <br>
+          <label ng-if="d.ganador != '' ">&nbsp;&nbsp;&nbsp;&nbsp;Ganador <strong> {{d.ganador}}</strong> </label>            
+              <div class="card-footer text-right">
+                <div class="pull-right">
+                 Estado del desafio: {{d.estado}}
+                </div><br>
+              </div>
+        </div><center>      
+      </center>
+    </div>    
+</div>
+    </ion-content>
+</ion-view>

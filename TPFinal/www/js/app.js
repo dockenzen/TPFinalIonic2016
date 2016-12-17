@@ -4,7 +4,7 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['starter.qrcodecontroller','ionic', 'starter.controllers', 'ionic-material', 'ionMdInput','starter.servicio','ngCordova','firebase','starter.factoryUsuario','starter.qrcodecontroller'])
+angular.module('starter', ['app.services','starter.qrcodecontroller','ionic', 'starter.controllers', 'ionic-material', 'ionMdInput','starter.servicio','ngCordova','firebase','starter.factoryUsuario','starter.qrcodecontroller'])
 
 .run(function($ionicPlatform) {
     $ionicPlatform.ready(function() {
@@ -147,7 +147,7 @@ angular.module('starter', ['starter.qrcodecontroller','ionic', 'starter.controll
                 controller: 'ProfileCtrl'
             },
             'fabContent': {
-                template: '<button id="fab-profile" class="button button-fab button-fab-bottom-right button-energized-900"><i class="icon ion-plus"></i></button>',
+                template: '',
                 controller: function ($timeout) {
                     /*$timeout(function () {
                         document.getElementById('fab-profile').classList.toggle('on');
