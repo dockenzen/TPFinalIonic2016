@@ -63,9 +63,9 @@ angular.module('starter', ['app.services','starter.qrcodecontroller','ionic', 's
             'fabContent': {
                 template: '<button id="fab-friends"></button>',
                 controller: function ($timeout) {
-                    $timeout(function () {
+                    /*$timeout(function () {
                         document.getElementById('fab-friends').classList.toggle('on');
-                    }, 200);
+                    }, 200);*/
                 }
             }
         }

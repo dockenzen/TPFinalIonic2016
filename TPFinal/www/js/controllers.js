@@ -303,10 +303,10 @@ $scope.Loguear = function (){
 $scope.DesafiosDisponibles = [];
 $scope.usuario = FactoryUsuario.getUser();
 
-  $scope.$on('$ionicView.beforeEnter', function () {
+  $scope.$on('$ionicParentView.beforeEnter', function () {
     if(firebase.auth().currentUser == null){
       $state.go('app.login');
-    }
+      }      
   });
 $scope.$on('$ionicView.leave', function () {
     $scope.DesafiosDisponibles = [];
@@ -404,7 +404,7 @@ $scope.aceptar = function(desafio){
 
 .controller('MisDesafiosCtrl', function($state,$scope, $stateParams, $timeout, ionicMaterialMotion, ionicMaterialInk,FactoryUsuario,Servicio) {
     
-    $scope.$on('$ionicView.beforeEnter', function () {
+    $scope.$on('$ionicParentView.beforeEnter', function () {
     if(firebase.auth().currentUser == null){
       $state.go('app.login');
     }
