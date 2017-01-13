@@ -11,11 +11,13 @@
             <ion-md-input ng-model="login.usuario" placeholder="Username" highlight-color="balanced" type="text"></ion-md-input>
             <ion-md-input ng-model="login.clave" placeholder="Password" highlight-color="energized" type="password"></ion-md-input>
         </div>
-        <div class="padding">
+        <div class="padding">            
+
             <button ng-click="Loguear()" class="button button-full button-assertive ink">Login</button>
             <BR>
             <center>
             <button ui-sref="app.registro" class="button expanded button-bar-positive">Registrarse</button>
+            <button ng-click="Github()" class="button button-full button-balanced ion-social-github"> GitHub</button>
             </center>
         </div>
         <div class="bar button button-flat" ng-if="logueado == 'no'" ng-click="resetPassword()">
