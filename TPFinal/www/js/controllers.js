@@ -146,12 +146,64 @@ try{
 
 $scope.Github = function(){
     var provider = new firebase.auth.GithubAuthProvider();
+    var updates={};
     provider.addScope('repo');
 
-    console.log(provider);
+    //console.log(provider);
 
-    firebase.auth().signInWithPopup(provider).then(function(result) {
-      var usuario = firebase.auth().currentUser;
+    firebase.auth().signInWithPopup(provider).then(function(result) {                
+        
+        var fecha = firebase.database.ServerValue.TIMESTAMP;
+        var usuario = {
+          correo: result.user.email,
+          nombre: "User-"+result.user.uid,
+          fechaCreacion: fecha,
+          fechaAcceso: fecha,
+          perfil:"cliente",
+          creditos:100,
+          uid:result.user.uid
+        };
+        Servicio.Guardar('usuario/' + result.user.uid, usuario);
+
+        firebase.auth().currentUser.updateProfile({
+            displayName: "User-"+usuario.uid,
+          })
+        updates['/usuario/' + usuario.uid + '/fechaAcceso'] = firebase.database.ServerValue.TIMESTAMP;
+        Servicio.Editar(updates);
+      
+
+        Servicio.Cargar('/usuario/' + usuario.uid).on('value',
+          function(respuesta) {
+            FactoryUsuario.setUser(respuesta.val());
+            console.log(respuesta.val());
+          },
+          function(error) {
+            // body...
+          }
+
+        );
+        $timeout(function() {
+          $scope.logueado = 'si';
+            if (usuario.emailVerified == false)
+            {
+                $scope.verificado = 'no';
+            }
+            else
+            {
+              try
+              {
+                FCMPlugin.subscribeToTopic('desafios');
+              }
+              catch(error)
+              {
+                console.info("No es un dispositivo móvil");
+              }
+              $scope.verificado = 'si';
+              $state.go("app.desafio");
+            }
+          $scope.cargando = false;
+        }, 1000);
+
 
   // This gives you a GitHub Access Token. You can use it to access the GitHub API.
         var token = result.credential.accessToken;
@@ -159,6 +211,7 @@ $scope.Github = function(){
         var user = result.user;
         console.log(user);
   // ...
+  
     }).catch(function(error) {
   // Handle Errors here.  
 
@@ -191,13 +244,13 @@ $scope.Loguear = function (){
       .then( function(resultado){
         var usuario = firebase.auth().currentUser;
         var updates = {};
-        updates['/usuario/' + usuario.displayName + '/fechaAcceso'] = firebase.database.ServerValue.TIMESTAMP;
+        updates['/usuario/' + usuario.uid + '/fechaAcceso'] = firebase.database.ServerValue.TIMESTAMP;
         Servicio.Editar(updates);
 
-        Servicio.Cargar('/usuario/' + usuario.displayName).on('value',
+        Servicio.Cargar('/usuario/' + usuario.uid).on('value',
           function(respuesta) {
             FactoryUsuario.setUser(respuesta.val());
-//            console.log(FactoryUsuario.Logueado);
+            //console.log(respuesta.val());
           },
           function(error) {
             // body...
@@ -334,7 +387,7 @@ $scope.Loguear = function (){
 
 })
 
-.controller('FriendsCtrl', function($state,$scope, $stateParams, $timeout, ionicMaterialInk, ionicMaterialMotion,Servicio,FactoryUsuario) {
+.controller('FriendsCtrl', function($state,$scope, $stateParams, $timeout, ionicMaterialInk, ionicMaterialMotion,Servicio,FactoryUsuario,CreditosSrv) {
 
 $scope.DesafiosDisponibles = [];
 $scope.usuario = FactoryUsuario.getUser();
@@ -352,14 +405,14 @@ $scope.$on('$ionicView.leave', function () {
     $scope.hoy = new Date().valueOf();
     var i = 0;
  
-    console.log($scope.usuario);
+//    console.log($scope.usuario);
 
     Servicio.Cargar('/Desafios')
         .on('child_added',function(snapshot)
             {   
               if(snapshot.val().usuario.correo != $scope.usuario.correo)
               {
-                console.log(snapshot);             
+  //              console.log(snapshot);             
                 var fecha_parse = new Date(snapshot.val().fechaFin);
                 var anio = fecha_parse.getFullYear();
                 var mes = fecha_parse.getMonth()+1;
@@ -392,22 +445,31 @@ aceptado
 pendiente
 definido
 */
-$scope.aceptar = function(desafio){
+        $scope.aceptar = function(desafio){
 
-  $state.go('app.gallery',{desId : desafio.id});
+          $state.go('app.gallery',{desId : desafio.id});
 
-  };
+          };        
+
+        $scope.definir = function(desafio){
+
+          $state.go('app.desAdm',{desId : desafio.id});
+
+          };
+
+        $scope.cerrar = function(desafio){
+        //devolver creditos
+        CreditosSrv.DevolverCreditos(desafio.usuario,desafio.creditosApostados);    
     
-
-    $scope.definir = function(desafio){
+        var updates = {};
+           
+        updates['/Desafios/' + desafio.id +"/estado" ] = "definido";
+        updates['/Desafios/' + desafio.id +"/ganador" ] = "Desafio no aceptado";
+        Servicio.Editar(updates);
     
-
-    $state.go('app.gallery',{desId : desafio.id});    
-        
-    };
-
-
-
+        $state.go('app.friends');
+        };
+    
 })
 
 .controller('ProfileCtrl', function($state,$scope, $stateParams, $timeout, ionicMaterialMotion, ionicMaterialInk,FactoryUsuario,Servicio) {
@@ -417,6 +479,8 @@ $scope.aceptar = function(desafio){
       $state.go('app.login');
       }
     });
+  
+    $scope.user = FactoryUsuario.getUser();
 
     $scope.$parent.showHeader();
     $scope.$parent.clearFabs();
@@ -468,8 +532,6 @@ $scope.aceptar = function(desafio){
                 i = i + 1;                                
               }
             });
-  
-
 
 
 
@@ -504,6 +566,7 @@ $scope.aceptar = function(desafio){
   });
 
     var usuario = FactoryUsuario.getUser();
+    console.log(usuario);
     $scope.desafio = {};
     $scope.inicial = {
           usuario:"",
@@ -567,18 +630,14 @@ $scope.aceptar = function(desafio){
 //                            alert("Desafio cargado");
 
                             var userActual = FactoryUsuario.getUser();
-                            //console.log(userActual);
-                            var name = firebase.auth().currentUser.displayName;
+                            console.log(userActual);
+                            var user = firebase.auth().currentUser;
                             var update={};
-                            update['/usuario/' + name +"/creditos" ] = userActual.creditos - desafio.creditosApostados ;
+                            update['/usuario/' + user.uid +"/creditos" ] = userActual.creditos - desafio.creditosApostados ;
                             Servicio.Editar(update);
                             //console.log(update);
-                            SrvFirebase.EnviarNotificacion();
+                     //       SrvFirebase.EnviarNotificacion();
                             alert("Desafio creado con exito !");   
-
-
-
-
                           }
                           else
                           {
@@ -627,7 +686,7 @@ $scope.aceptar = function(desafio){
                               
               var updateCreditos = [];
               var userActual = FactoryUsuario.getUser();
-              updateCreditos['/usuario/' + name +"/creditos" ] = userActual.creditos + parseInt(barcodeData.text);                  
+              updateCreditos['/usuario/' + userActual.uid +"/creditos" ] = userActual.creditos + parseInt(barcodeData.text);                  
               Servicio.Editar(updateDesafio);
               
               $timeout(function() { 
@@ -645,7 +704,7 @@ $scope.aceptar = function(desafio){
 
     })
 
-.controller('GalleryCtrl', function($state,$scope,$ionicHistory, $stateParams, $timeout, ionicMaterialInk, ionicMaterialMotion,Servicio,FactoryUsuario) {
+.controller('GalleryCtrl', function($state,$scope,$ionicHistory, $stateParams, $timeout, ionicMaterialInk, ionicMaterialMotion,Servicio,FactoryUsuario,CreditosSrv) {
 
 
 
@@ -694,16 +753,15 @@ $scope.desafio = {};
   $scope.aceptado = function(desafio)
   {    
       var usuarioAdversario = FactoryUsuario.getUser();
-      var name = firebase.auth().currentUser.displayName;
+      var user = firebase.auth().currentUser;
 
-
-      console.log(desafio);      
+      //console.log(desafio);      
 
    if(parseInt(desafio.creditosApostados) <= parseInt(usuarioAdversario.creditos))
     {
       var updateCreditos={};
       var updateDesafio={};
-      updateCreditos['/usuario/' + name +"/creditos" ] = usuarioAdversario.creditos - desafio.creditosApostados ;  
+      updateCreditos['/usuario/' + user.uid +"/creditos" ] = (usuarioAdversario.creditos - desafio.creditosApostados);  
       Servicio.Editar(updateCreditos);
       updateDesafio['/Desafios/' + desafio.id +"/estado" ] = "pendiente";
       updateDesafio['/Desafios/' + desafio.id +"/usuarioAdversario" ] = usuarioAdversario;
@@ -724,18 +782,20 @@ $scope.desafio = {};
   }
 
 
-  $scope.definir = function(desafio,ganador){
-
-
+  $scope.definirDesafio = function(desafio,usuario){    
+    
+    CreditosSrv.GanarCreditos(usuario,desafio.creditosApostados);    
+    
         var updates = {};
+           
         updates['/Desafios/' + desafio.id +"/estado" ] = "definido";
-        updates['/Desafios/' + desafio.id +"/ganador" ] = ganador;
-
-        console.info(updates);
-        
+        updates['/Desafios/' + desafio.id +"/ganador" ] = usuario.nombre;
+        Servicio.Editar(updates);
+    
         $state.go('app.friends');
-
   }
+
+
 })
 
 .controller('registroCtrl', function($scope,$state, $stateParams, $timeout, ionicMaterialInk, ionicMaterialMotion, Servicio, FactoryUsuario) {
@@ -775,6 +835,9 @@ $scope.desafio = {};
     {
       firebase.auth().createUserWithEmailAndPassword($scope.login.usuario, $scope.login.clave)
       .then(function(resultado){
+
+        console.log(resultado.uid);
+
         var fecha = firebase.database.ServerValue.TIMESTAMP;
         var usuario = {
           correo: $scope.login.usuario,
@@ -782,9 +845,10 @@ $scope.desafio = {};
           fechaCreacion: fecha,
           fechaAcceso: fecha,
           perfil:"cliente",
-          creditos:100
+          creditos:100,
+          uid:resultado.uid
         };
-        Servicio.Guardar('usuario/' + $scope.login.nombre, usuario);
+        Servicio.Guardar('usuario/' + resultado.uid, usuario);
 
         firebase.auth().signInWithEmailAndPassword($scope.login.usuario, $scope.login.clave).catch(function (error){
 
@@ -793,7 +857,7 @@ $scope.desafio = {};
             displayName: $scope.login.nombre,
           }).then(function() { 
 
-            Servicio.Cargar('/usuario/' + usuario.displayName).on('value',
+            Servicio.Cargar('/usuario/' + resultado.uid).on('value',
               function(respuesta) {
                 FactoryUsuario.setUser(respuesta.val());
               },

@@ -1,25 +1,46 @@
-<ion-view view-title="Perfil">
-    <ion-content ng-class="{expanded:$scope.isExpanded}">
-        <div class="padding">
-            <br>            
-                <h1 style="color: black;">Contacto</h1>
-            <a class="item item-thumbnail-left" href="#">        
+<ion-view view-title="Perfiles">
+<ion-content style="background: url(img/login.jpg) center; background-size: cover;" ng-class="{expanded:isExpanded}" class="animate-fade-slide-in">    
+    <div class="padding" >
+        <div style=" background-color: rgba(255,255,255,0.5);">            
+            <div style="opacity: 1;">
+            <h2 class="padding" style="margin-bottom: 0px; padding-bottom: 1px;">Creador</h2>
+            <a class="item item-thumbnail-left" style="border-style: none;"  >        
             <img ng-src="img/miFoto.png">
-            <h2 style="margin:20px 2px 2px 2px">Leandro Baldassarre</h2>
-            <p>Inspector de billeteras</p>
+            <h2 style="margin:20px 2px 2px 2px">Leandro Nicolas Baldassarre</h2>
+            <p>&nbsp;&nbsp;Inspector de billeteras</p>
             </a>
-            <div class="list">
-              <a class="item item-icon-left">  
-                <i class="icon ion-email"></i>
-                <h3>lenibaldassarre@gmail.com</h3>
-              </a>
-            <a class="item item-icon-left" onclick="window.open('http://www.github.com/dockenzen', '_system', 'location=yes'); return false;" href="#">
-                <i class="icon ion-person-stalker"></i>
-                    GitHub: dockenzen
-                <span class="badge badge-assertive">15</span>
-            </a>
-    
+            <center> <h3>Contacto</h3></center>
+                <div class="tabs tabs-dark tabs-icon-top static">
+                <a  class="item item-icon-left" onclick="window.open('https://mail.google.com/mail/u/0/?view=cm&fs=1&to=lenibaldassarre@gmail.com&su=AppDesafio&body=&bcc=&tf=1', '_system', 'location=yes'); return false;" href="#">  
+                    <i  class="icon ion-email"></i>
+                    <h3 style="color: red">Gmail</h3>
+                </a>
+                    <br>
+                <a class="item item-icon-left" onclick="window.open('http://www.github.com/dockenzen', '_system', 'location=yes'); return false;" href="#">
+                    <i class="icon ion-social-github"></i>
+                        <h3 style="color: #6cc644;">GitHub</h3>
+                    
+                </a>    
+                </div>            
             </div>
+        </div>
+    </div>
+    <br><br>
+            <div class="padding" >
+            <br>
+            <div style=" background-color: rgba(255,255,255,0.5);">
+                        <h4 class="content padding double-padding-x">Usuario Actual</h4>
+
+                <a class="item item-avatar item-icon-right" style="border-style: none;">
+                    <img src="img/user.jpg">
+                    <h2>{{user.nombre}}.</h2>
+                    <p>{{user.creditos}} créditos.</p>
+                    <i class="icon ion-chatbubble muted"></i>
+                </a>
+            </div>
+            <!--<h1 style="color: black;">Usted</h1>
+            <h2>Tus creditos disponibles son {{user.creditos}}</h2>
+            -->
         </div>        
     </ion-content>
 </ion-view>

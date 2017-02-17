@@ -71,11 +71,43 @@ angular.module('starter', ['app.services','starter.qrcodecontroller','ionic', 's
         }
     })
 
+    .state('app.desafiosPasados', {
+        url: '/friends',
+        views: {
+            'menuContent': {
+                templateUrl: 'templates/desafiosPasados.html',
+                controller: ''
+            },
+            'fabContent': {
+                template: '<button id="fab-friends"></button>',
+                controller: function ($timeout) {
+                    /*$timeout(function () {
+                        document.getElementById('fab-friends').classList.toggle('on');
+                    }, 200);*/
+                }
+            }
+        }
+    })
+
     .state('app.gallery', {
         url: '/gallery/:desId',
         views: {
             'menuContent': {
                 templateUrl: 'templates/gallery.html',
+                controller: 'GalleryCtrl'
+            },
+            'fabContent': {
+                template: ''
+                
+            }
+        }
+    })
+
+    .state('app.desAdm', {
+        url: '/desAdm/:desId',
+        views: {
+            'menuContent': {
+                templateUrl: 'templates/desAdm.html',
                 controller: 'GalleryCtrl'
             },
             'fabContent': {

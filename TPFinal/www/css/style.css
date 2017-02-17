@@ -170,3 +170,16 @@ font-family: impact;
 
 padding:10px 0 10px;
 }
+
+#elementotransparente {
+     opacity: 0.4;
+     -moz-opacity: 0.4;
+     filter: alpha(opacity=40);
+  }
+
+.elementotransparenteno{    
+    background-color: transparent;    
+    color: black;
+    position: absolute;
+    z-index: 1;
+}

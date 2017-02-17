@@ -1,37 +1,26 @@
 <ion-view view-title="Recarga S.O.S !">
          <ion-content padding="true" ng-class="{expanded:isExpanded}"  class="animate-fade-slide-in" style="background-color:#394B5F; background-repeat: no-repeat; background-position: center;">
-         <br><br>
-         <h2 class="stroke" style="font-family: 'Paytone One', sans-serif;
-">Comprar creditos</h2>
+         
+         <h2 class="stroke" style="font-family: 'Paytone One', sans-serif;">Comprar creditos</h2>
          <br><br><br>
-    <div class="wrapper">
-    <div>
-
-      <img ng-click="cargarCredito(10)"
-       ng-style="style" class="imagen"        
-       src="img/1.png">
-
-      <img ng-click="cargarCredito(50)"
-      ng-style="style" class="imagen" 
-      
-        src="img/2.png" >
-
-      <img ng-click="cargarCredito('100')" 
-      ng-style="style" class="imagen"
-      
-      src="img/3.png" >
+      <div class="wrapper">
+        <div>
+          <img ng-click="cargarCredito(10)" ng-style="style" class="imagen" src="img/1.png">
+          <img ng-click="cargarCredito(50)" ng-style="style" class="imagen" src="img/2.png" >
+          <img ng-click="cargarCredito('100')" ng-style="style" class="imagen" src="img/3.png" >
+        </div>
+      </div>      
+    <center>
+      <div>      
+        <form>
+          <input type="hidden" name="msg" rows="10" cols="40"/><br>
+        </form>
       </div>
-    </div>      
-    <div>      
-      <form>
-        <input type="hidden" name="msg" rows="10" cols="40"/><br>
-      </form>
-    </div>
-      <div data-role="content" id ="qr">      
-    </div>
-    <form>
-      <input type="button" value="Leer QR" ng-click="leerqr()">
-    </form>
+      <div data-role="content" id ="qr"></div><br>
+        <form>
+          <input type="button" value="Leer QR" ng-click="leerqr()">
+        </form>
+        <br>
+    </center>
   </ion-content>
-    
 </ion-view>

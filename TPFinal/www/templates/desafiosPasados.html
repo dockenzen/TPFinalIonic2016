@@ -1,9 +1,9 @@
-<ion-view view-title="Desafios disponibles!">
+<ion-view view-title="Desafios caducados!">
 <ion-content style="background: url(img/login.jpg) center; background-size: cover;">
     <ion-content ng-class="{expanded:isExpanded}" ng-controller="FriendsCtrl" class="animate-fade-slide-in">
 
 <div class="item card-item" ng-repeat="d in DesafiosDisponibles">
-    <div class="card stable-bg ink ink-dark" ng-if="d.fechaFin > hoy" >
+    <div class="card stable-bg ink ink-dark" ng-if="d.fechaFin < hoy" >
         <div  class="item item-text-wrap">
         <span class="item-note">&nbsp;
         Apostó<br>
@@ -18,18 +18,14 @@
                 </div><br>
               </div>
         </div><center>
-    <button class="ion-minus-circled" ng-click="definir(d)" ng-if="usuario.perfil == 'admin' && d.estado == 'pendiente' && d.usuarioAdversario != '' " style="background-color: red;">
-      <span style="font-family:arial; color:white; font-size: 14px;">Definir</span>
-    </button>
-    
-    <button class="ion-minus-circled" ng-click="aceptar(d)" ng-if="usuario.perfil == 'cliente' && d.estado == 'creado' " style="background-color: red;">
-      <span style="font-family:arial; color:white; font-size: 14px;">Ver desafio</span>
+    <button class="ion-minus-circled" ng-click="cerrar(d)" ng-if="usuario.perfil == 'admin' && d.estado == 'creado' " style="background-color: red;">
+      <span style="font-family:arial; color:white; font-size: 14px;">Cerrar</span>
     </button>
       </center>
     </div>    
 </div>
 
-    <button class="button button-full button-dark" ng-if="usuario.perfil != 'cliente' " ui-sref="app.desafiosPasados">Ver desafios caducados.</button>
+    <!--<button class="button button-full button-dark" ng-if="usuario.perfil != 'cliente' " ng-click="verDesafiosPasados()">Devolver saldo desafios incompletos.</button>-->
 
     </ion-content>
 </ion-view>

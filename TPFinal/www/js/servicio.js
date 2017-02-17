@@ -5,6 +5,7 @@ angular.module('starter.servicio', [])
     this.Editar = Editar;
     this.Buscar = Buscar;
     this.Cargar = Cargar;
+    this.Carganding = Carganding;
 
     function Guardar(ruta, objeto){
       return firebase.database().ref(ruta).set(objeto);
@@ -28,4 +29,70 @@ angular.module('starter.servicio', [])
         return firebase.database().ref(ruta);    
     }
 
-});
+    function Carganding(ruta){
+        return firebase.database().ref(ruta).then(function(result){
+            console.log(result);
+        });    
+    }
+
+})
+
+.service('CreditosSrv', ['$ionicPopup','Servicio',function($ionicPopup,Servicio){
+  this.GanarCreditos = function(jugGanador, creditos){
+
+    var intCreditos = parseInt(creditos);
+
+    intCreditos = (intCreditos * 2);
+    Servicio.Cargar('usuario/').child(jugGanador.uid).once('value',function(snapshot){
+
+      var newCredits = snapshot.val().creditos + intCreditos;
+
+      snapshot.ref.update({
+        creditos : newCredits
+      },function(error){
+          if(error){
+            console.info("ERROR: ", error);
+          }
+        });
+    });
+  };
+
+  this.DevolverCreditos = function(jugGanador, creditos){
+
+    var intCreditos = parseInt(creditos);
+
+    //intCreditos = (intCreditos * 2);
+    Servicio.Cargar('usuario/').child(jugGanador.uid).once('value',function(snapshot){
+
+      var newCredits = snapshot.val().creditos + intCreditos;
+
+      snapshot.ref.update({
+        creditos : newCredits
+      },function(error){
+          if(error){
+            console.info("ERROR: ", error);
+          }
+        });
+    });
+  };
+
+  this.GastarCreditos = function(jugador, creditos){
+
+    var intCreditos = parseInt(creditos);
+
+    Servicio.Cargar('usuario/').child(jugador.uid).once('value',function(snapshot){
+
+      var newCredits = snapshot.val().creditos - intCreditos;
+
+      snapshot.ref.update({
+        creditos : newCredits
+      },function(error){
+          if(error){
+            console.info("ERROR: ", error);
+          }
+        });
+    });
+  }
+}])
+
+;

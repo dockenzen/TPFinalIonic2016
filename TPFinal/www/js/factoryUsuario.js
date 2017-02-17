@@ -8,7 +8,8 @@ angular.module('starter.factoryUsuario', [])
 	fechaAcceso:"",
 	fechaCreacion:"",
 	nombre:"",
-	perfil:""
+	perfil:"",
+	uid:""
     };
 
     return{
@@ -19,6 +20,7 @@ angular.module('starter.factoryUsuario', [])
 			objeto.fechaCreacion = user.fechaCreacion;
 			objeto.nombre = user.nombre;
 			objeto.perfil = user.perfil;
+			objeto.uid = user.uid;
 		},
 		getUser:function(){
 			return objeto;

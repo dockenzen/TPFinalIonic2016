@@ -1,0 +1,35 @@
+<ion-view view-title="Detalle del desafio">
+    <ion-content ng-class="{expanded:isExpanded}" class="animate-fade-slide-in">                      
+            <div class="item card-item">
+              <div class="card stable-bg ink ink-dark">
+                <div class="item item-avatar item-text-wrap">
+                    <span class="avatar" style="background-image: url('img/user.jpg');"></span>
+                    <strong>{{desafio.usuario.nombre}}</strong> says "{{desafio.detalle}}."
+                    <div class="card-footer text-right">
+                        
+                        <div class="pull-left">
+                              <button ng-click="definirDesafio(desafio,desafio.usuario)" class="subdued button-balanced">Gano {{desafio.usuario.nombre}}</button>        
+                              <br>
+                        </div>
+                    </div>
+                </div>
+              </div>
+            </div>
+
+
+             <div class="item card-item">
+            <div class="card stable-bg ink ink-dark">
+                <div class="item item-avatar item-text-wrap">
+                    <span class="avatar" style="background-image: url('img/user.jpg');"></span>
+                    <strong>{{desafio.usuarioAdversario.nombre}}</strong> says "{{desafio.respuestaAdversario}}."
+                    <div class="card-footer text-right">
+                        
+                        <div class="pull-left">
+                  <button ng-click="definirDesafio(desafio,desafio.usuarioAdversario)" class="subdued button-balanced">Gano {{desafio.usuarioAdversario.nombre}}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>
